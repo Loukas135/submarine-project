@@ -5,7 +5,7 @@ import Experience from "../Experience.js";
 import Time from "../Utils/Time.js";
 import Physics from "../Physics/Physics.js";
 import { constants } from "../Physics/constants.js";
-import { abs } from "three/examples/jsm/nodes/Nodes.js";
+import { abs, ceil, round } from "three/examples/jsm/nodes/Nodes.js";
 
 export default class Submarine {
   constructor() {
@@ -16,7 +16,9 @@ export default class Submarine {
     this.physics = new Physics();
     /* Debug */
     if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder("submarine");
+      this.startExperimenting= this.debug.ui.addFolder("startExperimenting");
+      this.initialFolder= this.startExperimenting.addFolder('initialFolder')
+      this.debugFolder = this.startExperimenting.addFolder("submarine");
     }
 
     /* Setup */
@@ -42,49 +44,108 @@ export default class Submarine {
 
     /* Debug */
     if (this.debug.active) {
+      this.initialFolder
+      .add(this.model.position, "x")
+      .min(-10)
+      .max(10)
+      .step(0.01);
+    this.initialFolder
+      .add(this.model.position, "y")
+      .min(-10)
+      .max(10)
+      .step(0.01);
+    this.initialFolder
+      .add(this.model.position, "z")
+      .min(-10)
+      .max(10)
+      .step(0.01);
+      this.initialFolder
+      .add(constants, "massSubmarine")
+      .min(10)
+      .max(constants.massSubmarine)
+      .step(10).onChange((value) => {
+        constants.massSubmarine = value;
+      });
+    this.initialFolder
+      .add(constants, "V")
+      .min(10)
+      .max(constants.V)
+      .step(10).onChange((value) => {
+        
+        constants.V = value;
+      });
       this.debugFolder
-        .add(constants, "Diving")
-        .onChange((value) => {
-          if(value)
-          { 
-            constants.Diving = value;
-        }
-         else 
-         {
-          constants.Diving = false
-         }
-        });
+      .add(constants, "Diving")
+      .onChange((value) => {
+        if(value)
+        { 
+          constants.Diving = value;
+      }
+       else 
+       {
+        constants.Diving = false
+       }
+      });
       this.debugFolder
-        .add(this.model.position, "x")
-        .min(-10)
-        .max(10)
-        .step(0.01);
-      this.debugFolder
-        .add(this.model.position, "y")
-        .min(-10)
-        .max(10)
-        .step(0.01);
-      this.debugFolder
-        .add(this.model.position, "z")
-        .min(-10)
-        .max(10)
-        .step(0.01);
-        this.debugFolder
-        .add(constants, "mass")
-        .min(10)
-        .max(constants.mass)
-        .step(10).onChange((value) => {
-          constants.mass = value;
-        });
-      this.debugFolder
-        .add(constants, "V")
-        .min(10)
-        .max(constants.V)
-        .step(10).onChange((value) => {
+      .add(constants, "Float")
+      .onChange((value) => {
+        if(value)
+        { 
+          constants.Float = value;
+      }
+       else 
+       {
+        constants.Float = false
+        
+       }
+      });
+       if(constants.startExperimenting === false ){
+        
+        this.debugFolder.hide()
+       }
+       if(constants.startExperimenting){
+       
+
+       }
+      this.startExperimenting.add(constants, "startExperimenting")
+      .onChange((value) => {
+        if(value)
+        { 
+         
+        
+       
+        this.initialFolder.hide()
+        this.debugFolder.show()
+          constants.startExperimenting = true;
           
-          constants.V = value;
-        });
-    }
+          constants.VSubmarine= ((constants.Beam/2)*(constants.Beam/2)*constants.length*Math.PI)
+          constants.V=(constants.massSubmarine -constants.massSubmarine*0.12)/constants.Ro
+          constants.massSubmarine=constants.VSubmarine*constants.Ro
+          constants.massTanks= constants.massSubmarine*0.12
+          constants.massTotlal= Math.round(constants.massSubmarine -constants.massTanks)
+          constants.mass= constants.V*constants.Ro
+          constants.VTanks= constants.massTanks/constants.Ro
+          constants.VTotlal=constants.VSubmarine-constants.VTanks
+          constants.massCurrent=constants.VCurrent*constants.Ro
+          constants.VCurrent=(constants.massSubmarine -constants.massSubmarine*0.12)/constants.Ro
+          // console.log(constants.massTotlal)
+          // console.log(constants.mass)
+          // console.log(constants.VTotlal/constants.massTotlal)
+          // console.log(constants.VSubmarine)
+          // console.log(constants.VTanks)
+          // console.log(constants.V)
+      }
+       else 
+       {
+        constants.startExperimenting = false
+        this.initialFolder.show()
+        this.debugFolder.hide()
+        
+       }
+      });
+      
+      }
+      
   }
 
   submarineMovements() {
@@ -106,36 +167,137 @@ export default class Submarine {
       }
     });
   }
+  
+
   state() {
-    var result = this.physics.weightForce().y - this.physics.buoyancyForce().y;
-   result=constants.mass/2;
-    var acceleration=result/constants.mass;
-    acceleration=0.0005;
-    var speed1=constants.speed
-    speed1+=acceleration;
-    console.log(result)
-   console.log(speed1);
-    //console.log(result);
-    if (result > 0) {
-    this.model.position.y-=speed1
-    console.log(this.model.position.y)
-    } else if (result < 0  ) {  
-      this.model.position.y+=speed1
+     constants.resultY.set(0,this.physics.weightForce().y -this.physics.buoyancyForce().y,0) ;
+     constants.acceleration.set(0,constants.resultY.y/constants.mass,0) ;
+     console.log('weightFffffffffffffffffff'+this.physics.weightForce().y  )
+     console.log('buoyancyFFFFFFFFFFFFFFFFFFFFFFFFFf'+this.physics.buoyancyForce().y)
+    constants.speed1.y=constants.speed.y+ constants.acceleration.y*this.clock.getElapsedTime();
+    console.log('res : '+constants.resultY.y)
+    console.log('acc : '+ constants.acceleration.y)
+   console.log('speed : '+ constants.speed1.y);
+    if (constants.resultY.y > 0) {
+    this.model.position.y=this.model.position.y-constants.speed1.y 
+    console.log('posssssssssssssssssssss'+this.model.position.y)
+    } else if (constants.resultY.y < 0  ) {  
+
+      this.model.position.y= this.model.position.y -constants.speed1.y
+      console.log(this.model.position.y)
       // if(this.model.position.y)
       // console.log(this.model.position.y )
     } else {
-      this.model.position.y = 0;
+      this.model.position.y = this.model.position.y;
     }
+    constants.speed.y=constants.speed1.y
   }
+    
   update() {
-    if(constants.Diving){
+    this.experience.camera
+    if(constants.Diving===true && constants.Float===false){
+      console.log('Diving')
+      if(true ){ 
+      if(constants.massTotlal > constants.mass){
+        //  constants.mass+=0.2
+        constants.mass= (constants.V+0.001)*constants.Ro
+        if(constants.VTotlal>constants.V){
+          constants.V+=   0.0005
+        }
+
+        //  console.log('Divvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvving')
+        //  console.log('masssssssssssssssss'+constants.mass)
+        //  console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'+constants.V)
+        this.state();
+       
+      }
+      console.log('haha'+constants.resultY.y)
+    }
       // if(mass < 1500000)
       // constants.mass += 100000 
       // if(V< 20000){
       //   constants.V +=1000
       // }
-      this.state();
+      
+      
+     
     }
+    if(constants.Diving===false && constants.Float===false){
+      
+      console.log('abdmass'+constants.resultY.y)
+      if(  constants.resultY.y  >0){
+        console.log('NotDiving')
+        if(constants.mass>constants.massCurrent){ 
+          constants.mass= (constants.V-0.0001)*constants.Ro
+      if(constants.VSubmarine> constants.V){
+         constants.V= (constants.mass+0.01)/constants.Ro
+        // constants.V+=  0.0001
+        console.log('NotttttttttttttttttttttttttDiving')
+        this.state()
+        console.log('ressssssssssssss'+constants.resultY.y)
+      }}
+      // constants.mass= constants.V*constants.Ro
+      constants.resultY.y= Math.round(constants.resultY.y)
+      console.log('floor'+constants.resultY.y)
+      console.log('Totlal'+constants.VTotlal)
+      console.log(constants.V)
+    }
+    
+
+    if( constants.resultY.y  <0){
+      
+      
+      // if(constants.massCurrent > constants.mass){
+      //   //  constants.mass+=0.2
+      //   constants.mass= (constants.V+0.001)*constants.Ro
+        
+      //   this.state();
+       
+      // }
+      // constants.V= constants.mass/constants.Ro
+
+  }
+
+    // console.log('resulty'+constants.resultY.y)
+      // constants.resultY.y= Math.round(constants.resultY.y)
+   
+        
+    }
+    if(constants.Float===true && constants.Diving === false ){
+      if(true){
+        console.log('abdmass'+constants.V)
+        console.log('abdVV'+constants.VTotlal)
+        if(constants.V < constants.VTotlal){
+          //  constants.mass+=0.2
+          constants.V= (constants.mass+0.1)/constants.Ro
+           console.log('Divvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvving')
+           console.log('masssssssssssssssss'+constants.mass)
+           console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'+constants.V)
+          this.state();
+         
+        }
+        constants.mass= constants.V*constants.Ro
+
+      //  constants.V= constants.mass/constants.Ro
+
+      }
+    }
+    // if(constants.Float===false && constants.Diving === false){
+    //   if(Math.round(constants.resultY.y) !==0)
+    //   if(constants.massTotlal > constants.mass){
+    //     constants.mass= (constants.V+0.001)*constants.Ro
+        
+    //     console.log('Nottttttttttttttttttfloattttttttttttttttttttttt')
+    //     this.state()
+       
+
+    //   }
+    // }
+
+    // if(this.model.position.y >0.3){
+     
+    //   this.state()
+    // }
     
   }
 }

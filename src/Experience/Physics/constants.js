@@ -1,16 +1,25 @@
 
 import * as THREE from "three";
 export const constants = {
+  startExperimenting:false,
   Diving:false,
-
+ Float:false,
   G: 9.8,
   Beam:13,
   length:170,
   Ro:997,
-  mass: 10000000000,
-  massTanks:1000000,
-  V:2200000,
-  Vtanks:0,
-  VSubmarine:220,
-  speed:new THREE.Vector3(0,0,0)
+  massSubmarine:16764000,
+  mass: 16764000,
+  massTanks:2011680,
+  massTotlal :16764000+2011680,
+  V:16814,
+  VTanks:2000,
+   VTotlal:22500 -2000,
+  VSubmarine:22500,
+  VCurrent:0,
+  massCurrent:0,
+  speed:new THREE.Vector3(0,0,0),
+  speed1:new THREE.Vector3(0,0,0),
+  acceleration: new THREE.Vector3(0,0,0),
+  resultY:  new THREE.Vector3(0,0,0),
 };
