@@ -64,7 +64,7 @@ export default class Experience {
     this.renderer.update();
    
     if(this.world.submarine)
-    this.world.submarine.update();
+      this.world.submarine.update();
 
   }
 
