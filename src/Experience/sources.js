@@ -14,19 +14,24 @@ const sources = [
       texturesPath + "environmentMap/py.jpg",
       texturesPath + "environmentMap/ny.jpg",
       texturesPath + "environmentMap/pz.jpg",
-      texturesPath + "environmentMap/nz.jpg"
-    ]
+      texturesPath + "environmentMap/nz.jpg",
+    ],
   },
   {
     name: "waterSurfaceTexture",
     type: "texture",
-    path: texturesPath + "water.jpg"
+    path: texturesPath + "water.jpg",
   },
   {
     name: "submarineModel",
     type: "gltfModel",
-    path: modelsPath + "ohio-class_submarine_ssbn.glb"
-  }
+    path: modelsPath + "ohio-class_submarine_ssbn.glb",
+  },
+  {
+    name: "seagullsModel",
+    type: "gltfModel",
+    path: modelsPath + "seagulls_animated.glb",
+  },
 ];
 
 export default sources;

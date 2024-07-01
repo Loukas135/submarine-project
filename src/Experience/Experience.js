@@ -6,6 +6,7 @@ import Audios from "./Audios/Audios.js";
 
 import Camera from "./Camera.js";
 import Renderer from "./Renderer.js";
+import Composer from "./Composer.js";
 
 import Sizes from "./Utils/Sizes.js";
 import Time from "./Utils/Time.js";
@@ -13,7 +14,7 @@ import Resources from "./Utils/Resources.js";
 import Debug from "./Utils/Debug.js";
 
 import sources from "./sources.js";
-import submarine from "./World/Submarine.js"
+import submarine from "./World/Submarine.js";
 let instance = null;
 
 export default class Experience {
@@ -31,18 +32,19 @@ export default class Experience {
     this.canvas = canvas;
 
     /* Setup */
-    
+
     this.sizes = new Sizes();
     this.time = new Time();
     this.scene = new THREE.Scene();
     this.resources = new Resources(sources);
     this.camera = new Camera();
     this.renderer = new Renderer();
-    
+    this.Composer = new Composer();
+
     this.world = new World();
     this.debug = new Debug();
     this.audios = new Audios();
-    
+
     /* Resize Event */
     this.sizes.on("resize", () => {
       this.resize();
@@ -61,11 +63,13 @@ export default class Experience {
 
   update() {
     this.camera.update();
-    this.renderer.update();
-   
-    if(this.world.submarine)
-      this.world.submarine.update();
+    this.world.update();
+    // this.renderer.update();
+    this.Composer.update();
 
+    if (this.world.submarine) {
+      this.world.submarine.update();
+    }
   }
 
   destroy() {
@@ -73,7 +77,7 @@ export default class Experience {
     this.time.off("update");
 
     /* Traverse the whole scene */
-    this.scene.traverse(child => {
+    this.scene.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.geometry.dispose();
 

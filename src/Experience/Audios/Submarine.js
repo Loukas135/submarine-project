@@ -15,7 +15,10 @@ export default class SubmarineAudios {
 
     this.submarineAudiosController = {
       play: () => {
-        this.submarineAudios.map((audio) => audio.play());
+        this.submarineAudios.map((audio) => {
+          audio.play();
+          audio.onended = () => audio.play();
+        });
       },
       pause: () => {
         this.submarineAudios.map((audio) => audio.pause());

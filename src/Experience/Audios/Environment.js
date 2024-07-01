@@ -15,7 +15,10 @@ export default class environmentAudios {
 
     this.environmentAudiosController = {
       play: () => {
-        this.environmentAudios.map((audio) => audio.play());
+        this.environmentAudios.map((audio) => {
+          audio.play();
+          audio.onended = () => audio.play();
+        });
       },
       pause: () => {
         this.environmentAudios.map((audio) => audio.pause());
