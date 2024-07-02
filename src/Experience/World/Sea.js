@@ -12,8 +12,10 @@ export default class Sea {
     this.debug = this.experience.debug;
 
     this.debugObject = {
-      depthColor: "#126889",
-      surfaceColor: "#1da6e3",
+      // depthColor: "#126889",
+      // surfaceColor: "#1da6e3",
+      depthColor: "#050f12",
+      surfaceColor: "#1b61eb",
     };
 
     this.clock = new THREE.Clock();
@@ -27,7 +29,7 @@ export default class Sea {
   }
 
   setSea() {
-    this.geometry = new THREE.PlaneGeometry(50, 50, 256, 256);
+    this.geometry = new THREE.PlaneGeometry(250, 250, 512, 512);
 
     this.material = new THREE.ShaderMaterial({
       vertexShader,
@@ -44,7 +46,7 @@ export default class Sea {
         uWavesFrequency: { value: new THREE.Vector2(0.2, 0.2) },
 
         uSmallWavesSpeed: { value: 0.3 },
-        uSmallWavesElevation: { value: 0.06 },
+        uSmallWavesElevation: { value: 0.08 },
         uSmallWavesFrequency: { value: 2.75 },
         uSmallWaveIterations: { value: 3 },
 
@@ -53,7 +55,7 @@ export default class Sea {
         uSurfaceColor: {
           value: new THREE.Color(this.debugObject.surfaceColor),
         },
-        uColorOffset: { value: 0.08 },
+        uColorOffset: { value: 0.06 },
         uColorMultiplier: { value: 5 },
         uColorOpacity: { value: 0.8 },
       },

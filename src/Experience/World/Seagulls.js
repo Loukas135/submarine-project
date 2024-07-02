@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 import Experience from "../Experience.js";
 
-export default class Submarine {
+export default class Seagulls {
   constructor() {
     this.experience = new Experience();
     this.scene = this.experience.scene;
@@ -28,7 +28,7 @@ export default class Submarine {
 
     this.scene.add(this.model);
 
-    this.model.traverse(child => {
+    this.model.traverse((child) => {
       if (child instanceof THREE.Mesh) {
         child.castShadow = true;
         // child.receiveShadow = true;

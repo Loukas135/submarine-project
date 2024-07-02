@@ -5,6 +5,7 @@ import Environment from "./Environment.js";
 import Submarine from "./Submarine.js";
 import Sea from "./Sea.js";
 import Seagulls from "./Seagulls.js";
+import Island from "./Island.js";
 
 export default class World {
   constructor() {
@@ -19,6 +20,7 @@ export default class World {
       this.seagulls = new Seagulls();
       this.submarine = new Submarine();
       this.environment = new Environment();
+      this.island = new Island();
       // this.waterSurface = new WaterSurface();
     });
   }

@@ -32,6 +32,11 @@ const sources = [
     type: "gltfModel",
     path: modelsPath + "seagulls_animated.glb",
   },
+  {
+    name: "easterIsland",
+    type: "gltfModel",
+    path: modelsPath + "easter_island.glb",
+  },
 ];
 
 export default sources;

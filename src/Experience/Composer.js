@@ -2,13 +2,13 @@ import * as THREE from "three";
 
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
-import { SMAAPass } from "three/examples/jsm/postprocessing/SMAAPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
+import { GammaCorrectionShader } from "three/examples/jsm/Addons.js";
 
 import Experience from "./Experience.js";
 
-import underWaterVertexShader from "../shaders/underWater/vertex.glsl";
-import underWaterFragmentShader from "../shaders/underWater/fragment.glsl";
+import environmentVertexShader from "../shaders/environment/vertex.glsl";
+import environmentFragmentShader from "../shaders/environment/fragment.glsl";
 
 export default class Composer {
   constructor() {
@@ -24,28 +24,31 @@ export default class Composer {
     this.instance = new EffectComposer(this.renderer);
     this.instance.addPass(new RenderPass(this.scene, this.camera));
 
-    this.underWaterShader = new THREE.ShaderMaterial({
-      vertexShader: underWaterVertexShader,
-      fragmentShader: underWaterFragmentShader,
+    this.environmentShader = new THREE.ShaderMaterial({
+      vertexShader: environmentVertexShader,
+      fragmentShader: environmentFragmentShader,
       uniforms: {
         tDiffuse: { value: null },
+        isUnderWater: { value: false },
       },
     });
 
-    this.shaderPass = new ShaderPass(this.underWaterShader);
+    this.environmentShaderPass = new ShaderPass(this.environmentShader);
+
+    this.instance.addPass(this.environmentShaderPass);
   }
 
   update() {
     this.instance.render();
 
-    const lastPass = this.instance.passes[this.instance.passes.length - 1];
+    const underWaterUniform = this.environmentShaderPass.uniforms.isUnderWater;
+    const isUnderWater = underWaterUniform.value === true;
+    const cameraHeight = this.camera.position.y;
 
-    const isShaderPass = lastPass instanceof ShaderPass;
-
-    if (this.camera.position.y < 0 && !isShaderPass) {
-      this.instance.addPass(this.shaderPass);
-    } else if (this.camera.position.y >= 0 && isShaderPass) {
-      this.instance.removePass(lastPass);
+    if (cameraHeight < 0 && !isUnderWater) {
+      underWaterUniform.value = true;
+    } else if (cameraHeight >= 0 && isUnderWater) {
+      underWaterUniform.value = false;
     }
   }
 }
