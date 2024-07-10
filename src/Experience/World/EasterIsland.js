@@ -2,7 +2,7 @@ import * as THREE from "three";
 
 import Experience from "../Experience.js";
 
-export default class Island {
+export default class EasterIsland {
   constructor() {
     this.experience = new Experience();
     this.scene = this.experience.scene;
@@ -11,11 +11,11 @@ export default class Island {
 
     /* Debug */
     if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder("Island");
+      this.debugFolder = this.debug.ui.addFolder("EasterIsland");
     }
 
     /* Setup */
-    this.resources = this.resources.items.easterIsland;
+    this.resources = this.resources.items.easterIslandModel;
 
     this.setModel();
   }
@@ -24,7 +24,7 @@ export default class Island {
     this.model = this.resources.scene;
     this.model.position.set(170, -19.5, 0);
     this.model.rotation.y = -222;
-    this.model.scale.set(150, 500, 150);
+    this.model.scale.set(180, 500, 150);
 
     this.scene.add(this.model);
 

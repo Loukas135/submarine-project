@@ -18,9 +18,16 @@ const sources = [
     ],
   },
   {
-    name: "waterSurfaceTexture",
-    type: "texture",
-    path: texturesPath + "water.jpg",
+    name: "skyboxTextures",
+    type: "cubeTexture",
+    path: [
+      texturesPath + "skybox/left.jpg",
+      texturesPath + "skybox/right.jpg",
+      texturesPath + "skybox/top.jpg",
+      texturesPath + "skybox/bottom.jpg",
+      texturesPath + "skybox/back.jpg",
+      texturesPath + "skybox/front.jpg",
+    ],
   },
   {
     name: "submarineModel",
@@ -33,9 +40,24 @@ const sources = [
     path: modelsPath + "seagulls_animated.glb",
   },
   {
-    name: "easterIsland",
+    name: "easterIslandModel",
     type: "gltfModel",
     path: modelsPath + "easter_island.glb",
+  },
+  {
+    name: "mountFujiVolcanoModel",
+    type: "gltfModel",
+    path: modelsPath + "mount_fuji_volcano_japan.glb",
+  },
+  {
+    name: "sanSalvadorIslandModel",
+    type: "gltfModel",
+    path: modelsPath + "san_salvador_island.glb",
+  },
+  {
+    name: "gunungMountAgungBaliModel",
+    type: "gltfModel",
+    path: modelsPath + "gunung_mount_agung_bali.glb",
   },
 ];
 
