@@ -1,10 +1,9 @@
-import * as THREE from "three";
+import { Mesh, Clock } from "three";
 
 import Experience from "../Experience.js";
 
 import Physics from "../Physics/Physics.js";
 import { constants } from "../Physics/constants.js";
-import { abs, ceil, round } from "three/examples/jsm/nodes/Nodes.js";
 
 export default class Submarine {
   constructor() {
@@ -22,7 +21,7 @@ export default class Submarine {
 
     /* Setup */
     this.resources = this.resources.items.submarineModel;
-    this.clock = new THREE.Clock();
+    this.clock = new Clock();
 
     this.setModel();
     this.submarineMovements();
@@ -34,7 +33,7 @@ export default class Submarine {
     this.scene.add(this.model);
 
     this.model.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
+      if (child instanceof Mesh) {
         child.castShadow = true;
         child.receiveShadow = true;
       }

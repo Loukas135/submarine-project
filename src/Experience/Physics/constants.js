@@ -1,5 +1,5 @@
+import { Vector3 } from "three";
 
-import * as THREE from "three";
 export const constants = {
   startExperimenting: false,
   Diving: false,
@@ -19,17 +19,17 @@ export const constants = {
   VSubmarine: 22500,
   VCurrent: 0,
   massCurrent: 0,
-  speed: new THREE.Vector3(0,0,0),
-  speed1: new THREE.Vector3(0,0,0),
-  acceleration: new THREE.Vector3(0,0,0),
-  resultY:  new THREE.Vector3(0,0,0),
+  speed: new Vector3(0, 0, 0),
+  speed1: new Vector3(0, 0, 0),
+  acceleration: new Vector3(0, 0, 0),
+  resultY: new Vector3(0, 0, 0),
   /* Thrust */
   power: 150000,
   n: 1,
   D: 2,
   pitch: 1,
-  resultZ: new THREE.Vector3(0, 0, 0),
-  speedZ: new THREE.Vector3(0, 0, 0),
+  resultZ: new Vector3(0, 0, 0),
+  speedZ: new Vector3(0, 0, 0),
   /* */
   /* Drag */
   Cd: 0.82,

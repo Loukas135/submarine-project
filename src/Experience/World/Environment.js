@@ -1,4 +1,6 @@
-import * as THREE from "three";
+import { Scene, PMREMGenerator, Vector3 } from "three";
+
+import { Sky } from "three/examples/jsm/objects/Sky.js";
 
 import Experience from "../Experience.js";
 
@@ -6,99 +8,52 @@ export default class Environment {
   constructor() {
     this.experience = new Experience();
     this.scene = experience.scene;
-    this.resources = this.experience.resources;
-    this.debug = this.experience.debug;
+    this.renderer = this.experience.renderer.instance;
 
-    /* Debug */
-    if (this.debug.active) {
-      this.debugFolder = this.debug.ui.addFolder("environment");
-    }
+    this.renderTarget;
+    this.environmentScene = new Scene();
+    this.pmremGenerator = new PMREMGenerator(this.renderer);
 
-    this.setSunLight();
-    this.setEnvironmentMap();
+    this.setSun();
+    this.setSkybox();
   }
 
-  setSunLight() {
-    this.sunLight = new THREE.DirectionalLight("#ffffff", 5);
-    this.sunLight.castShadow = true;
-    this.sunLight.shadow.camera.left = -10;
-    this.sunLight.shadow.camera.right = 10;
-    this.sunLight.shadow.camera.top = 10;
-    this.sunLight.shadow.camera.bottom = -10;
-    this.sunLight.shadow.camera.near = 0.5;
-    this.sunLight.shadow.camera.far = 25;
-    this.sunLight.shadow.mapSize.set(1024, 1024);
-    this.sunLight.shadow.normalBias = 0.05;
-    this.sunLight.position.set(-5, 2, -1);
-
-    this.sunLightHelper = new THREE.CameraHelper(this.sunLight.shadow.camera);
-    this.sunLightHelper.visible = false;
-
-    this.scene.add(this.sunLight, this.sunLightHelper);
-
-    /* Debug */
-    if (this.debug.active) {
-      this.sunLightFolder = this.debugFolder.addFolder("sun light");
-
-      this.sunLightFolder
-        .add(this.sunLight, "intensity")
-        .min(0)
-        .max(100)
-        .step(0.001);
-      this.sunLightFolder
-        .add(this.sunLight.position, "x")
-        .min(-10)
-        .max(10)
-        .step(0.001);
-      this.sunLightFolder
-        .add(this.sunLight.position, "y")
-        .min(0)
-        .max(10)
-        .step(0.001);
-      this.sunLightFolder
-        .add(this.sunLight.position, "z")
-        .min(-10)
-        .max(10)
-        .step(0.001);
-    }
+  setSun() {
+    this.sunPosition = new Vector3();
   }
 
-  setEnvironmentMap() {
-    this.environmentMap = {};
-    this.environmentMap.intensity = 0.4;
-    this.environmentMap.texture = this.resources.items.skyboxTextures;
-    this.environmentMap.texture.encoding = THREE.sRGBEncoding;
+  setSkybox() {
+    this.skybox = new Sky();
+    this.skybox.scale.setScalar(10000);
+    this.scene.add(this.skybox);
 
-    this.scene.environment = this.environmentMap.texture;
-    this.scene.background = this.environmentMap.texture;
+    this.skyboxUniforms = this.skybox.material.uniforms;
 
-    this.environmentMap.updateMaterials = () => {
-      this.scene.traverse((child) => {
-        if (
-          child instanceof THREE.Mesh &&
-          child.material instanceof THREE.MeshStandardMaterial
-        ) {
-          child.material.envMap = this.environmentMap.texture;
-          child.material.envMapIntensity = this.environmentMap.intensity;
-          child.material.needsUpdate = true;
-        }
-      });
-    };
-    this.environmentMap.updateMaterials();
-
-    /* Debug */
-    if (this.debug.active) {
-      this.debugFolder
-        .add(this.environmentMap, "intensity")
-        .min(0)
-        .max(5)
-        .step(0.001)
-        .name("envMapIntensity")
-        .onChange(this.environmentMap.updateMaterials);
-    }
+    this.skyboxUniforms["turbidity"].value = 10;
+    this.skyboxUniforms["rayleigh"].value = 2;
+    this.skyboxUniforms["mieCoefficient"].value = 0.005;
+    this.skyboxUniforms["mieDirectionalG"].value = 0.8;
   }
 
-  setFog() {
-    this.scene.fog = new THREE.Fog("#7c7c7c", 3, 15);
+  update() {
+    this.sunPosition.setFromSphericalCoords(1, 1.5, Math.PI);
+
+    this.skybox.material.uniforms["sunPosition"].value.copy(this.sunPosition);
+
+    this.oceanWater = this.experience.world.ocean;
+
+    this.oceanWater.sunDirectionUniform.value
+      .copy(this.sunPosition)
+      .normalize();
+
+    if (this.renderTarget !== undefined) {
+      this.renderTarget.dispose();
+    }
+
+    this.environmentScene.add(this.skybox);
+    this.renderTarget = this.pmremGenerator.fromScene(this.environmentScene);
+    this.scene.add(this.skybox);
+
+    this.scene.environment = this.renderTarget.texture;
   }
 }

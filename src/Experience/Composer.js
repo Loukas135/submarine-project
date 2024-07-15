@@ -1,14 +1,14 @@
-import * as THREE from "three";
-
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer.js";
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass.js";
 import { ShaderPass } from "three/examples/jsm/postprocessing/ShaderPass.js";
-import { GammaCorrectionShader } from "three/examples/jsm/Addons.js";
 
 import Experience from "./Experience.js";
 
 import environmentVertexShader from "../shaders/environment/vertex.glsl";
 import environmentFragmentShader from "../shaders/environment/fragment.glsl";
+
+import toneMappingVertexShader from "../shaders/toneMapping/vertex.glsl";
+import toneMappingFragmentShader from "../shaders/toneMapping/fragment.glsl";
 
 export default class Composer {
   constructor() {
@@ -17,14 +17,23 @@ export default class Composer {
     this.scene = this.experience.scene;
     this.camera = this.experience.camera.instance;
 
+    this.setPasses();
     this.setInstance();
   }
 
-  setInstance() {
-    this.instance = new EffectComposer(this.renderer);
-    this.instance.addPass(new RenderPass(this.scene, this.camera));
+  setPasses() {
+    this.renderPass = new RenderPass(this.scene, this.camera);
 
-    this.environmentShader = new THREE.ShaderMaterial({
+    this.toneMappingPass = new ShaderPass({
+      uniforms: {
+        tDiffuse: { value: null },
+        exposure: { value: 0.2 },
+      },
+      vertexShader: toneMappingVertexShader,
+      fragmentShader: toneMappingFragmentShader,
+    });
+
+    this.environmentShaderPass = new ShaderPass({
       vertexShader: environmentVertexShader,
       fragmentShader: environmentFragmentShader,
       uniforms: {
@@ -32,9 +41,12 @@ export default class Composer {
         isUnderWater: { value: false },
       },
     });
+  }
 
-    this.environmentShaderPass = new ShaderPass(this.environmentShader);
-
+  setInstance() {
+    this.instance = new EffectComposer(this.renderer);
+    this.instance.addPass(this.renderPass);
+    this.instance.addPass(this.toneMappingPass);
     this.instance.addPass(this.environmentShaderPass);
   }
 

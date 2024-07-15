@@ -1,13 +1,9 @@
 import Experience from "../Experience.js";
 
-import Environment from "./Environment.js";
-import Submarine from "./Submarine.js";
-import Sea from "./Sea.js";
+import Ocean from "./Ocean.js";
 import Seagulls from "./Seagulls.js";
-import EasterIsland from "./EasterIsland.js";
-import MountFujiVolcano from "./MountFujiVolcano.js";
-import SanSalvadorIsland from "./SanSalvadorIsland.js";
-import GunungMountAgungBaliIsland from "./GunungMountAgungBaliIsland.js";
+import Submarine from "./Submarine.js";
+import Environment from "./Environment.js";
 
 export default class World {
   constructor() {
@@ -17,15 +13,12 @@ export default class World {
 
     /* Waiting for resources to load */
     this.resources.on("ready", () => {
-      /* Setup */
-      this.sea = new Sea();
+      this.ocean = new Ocean();
       this.seagulls = new Seagulls();
       this.submarine = new Submarine();
       this.environment = new Environment();
-      this.easterIsland = new EasterIsland();
-      this.mountFujiVolcano = new MountFujiVolcano();
-      this.sanSalvadorIsland = new SanSalvadorIsland();
-      this.gunungMountAgungBali = new GunungMountAgungBaliIsland();
+
+      this.environment.update();
     });
   }
 
@@ -34,8 +27,8 @@ export default class World {
       this.seagulls.update();
     }
 
-    if (this.sea) {
-      this.sea.update();
+    if (this.ocean) {
+      this.ocean.update();
     }
   }
 }

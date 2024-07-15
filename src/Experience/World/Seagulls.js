@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { Mesh, AnimationMixer } from "three";
 
 import Experience from "../Experience.js";
 
@@ -29,7 +29,7 @@ export default class Seagulls {
     this.scene.add(this.model);
 
     this.model.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
+      if (child instanceof Mesh) {
         child.castShadow = true;
         // child.receiveShadow = true;
       }
@@ -55,7 +55,7 @@ export default class Seagulls {
 
   setAnimation() {
     this.animation = {};
-    this.animation.mixer = new THREE.AnimationMixer(this.model);
+    this.animation.mixer = new AnimationMixer(this.model);
     this.animation.action = this.animation.mixer.clipAction(
       this.resources.animations[0]
     );

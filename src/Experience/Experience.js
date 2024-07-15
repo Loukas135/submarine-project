@@ -1,4 +1,4 @@
-import * as THREE from "three";
+import { Scene, Mesh } from "three";
 
 import World from "./World/World.js";
 
@@ -35,7 +35,7 @@ export default class Experience {
 
     this.sizes = new Sizes();
     this.time = new Time();
-    this.scene = new THREE.Scene();
+    this.scene = new Scene();
     this.resources = new Resources(sources);
     this.camera = new Camera();
     this.renderer = new Renderer();
@@ -78,7 +78,7 @@ export default class Experience {
 
     /* Traverse the whole scene */
     this.scene.traverse((child) => {
-      if (child instanceof THREE.Mesh) {
+      if (child instanceof Mesh) {
         child.geometry.dispose();
 
         for (const key in child.material) {
