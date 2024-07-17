@@ -4,6 +4,7 @@ import Ocean from "./Ocean.js";
 import Seagulls from "./Seagulls.js";
 import Submarine from "./Submarine.js";
 import Environment from "./Environment.js";
+import Helicopter from "./Helicopter.js";
 
 export default class World {
   constructor() {
@@ -16,6 +17,7 @@ export default class World {
       this.ocean = new Ocean();
       this.seagulls = new Seagulls();
       this.submarine = new Submarine();
+      this.helicopter = new Helicopter();
       this.environment = new Environment();
 
       this.environment.update();
@@ -23,12 +25,16 @@ export default class World {
   }
 
   update() {
+    if (this.ocean) {
+      this.ocean.update();
+    }
+
     if (this.seagulls) {
       this.seagulls.update();
     }
 
-    if (this.ocean) {
-      this.ocean.update();
+    if (this.helicopter) {
+      this.helicopter.update();
     }
   }
 }

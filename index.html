@@ -4,11 +4,37 @@
     <meta charset="UTF-8" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/png" href="/ohio_class_submarine.png" />
     <title>Submarine</title>
-    <script src="src/script.js" type="module"></script>
+    <link type="text/css" rel="stylesheet" href="index.css" />
   </head>
   <body>
+    <div id="backdrop">
+      <button id="start-button">Start!</button>
+    </div>
+
     <canvas class="webgl"></canvas>
+
+    <ul class="mobile-controls">
+      <li class="movement arrow-up">
+        <button id="move-forward" data-key="w"></button>
+      </li>
+      <li class="movement arrow-down">
+        <button id="move-backward" data-key="s"></button>
+      </li>
+      <li class="movement arrow-left">
+        <button id="move-leftward" data-key="a"></button>
+      </li>
+      <li class="movement arrow-right">
+        <button id="move-rightward" data-key="d"></button>
+      </li>
+      <li class="movement submarine-dive">
+        <button id="dive" data-key="f"></button>
+      </li>
+      <li class="movement submarine-arise">
+        <button id="arise" data-key="e"></button>
+      </li>
+    </ul>
+
+    <script src="src/script.js" type="module"></script>
   </body>
 </html>

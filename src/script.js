@@ -1,7 +1,15 @@
-import "./style.css";
-
 import Experience from "./Experience/Experience.js";
 
-const canvas = document.querySelector("canvas.webgl");
+import MobileControls from "./MobileControls.js";
 
-const experience = new Experience(canvas);
+const backdrop = document.getElementById("backdrop");
+const startButton = document.getElementById("start-button");
+
+const mobileControls = new MobileControls();
+
+startButton.addEventListener("click", () => {
+  backdrop.remove();
+
+  const canvas = document.querySelector("canvas.webgl");
+  const experience = new Experience(canvas);
+});

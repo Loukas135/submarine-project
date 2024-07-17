@@ -2,8 +2,6 @@ import { Scene, Mesh } from "three";
 
 import World from "./World/World.js";
 
-import Audios from "./Audios/Audios.js";
-
 import Camera from "./Camera.js";
 import Renderer from "./Renderer.js";
 import Composer from "./Composer.js";
@@ -13,8 +11,10 @@ import Time from "./Utils/Time.js";
 import Resources from "./Utils/Resources.js";
 import Debug from "./Utils/Debug.js";
 
+import Controls from "./Controls/Controls.js";
+
 import sources from "./sources.js";
-import submarine from "./World/Submarine.js";
+
 let instance = null;
 
 export default class Experience {
@@ -36,14 +36,13 @@ export default class Experience {
     this.sizes = new Sizes();
     this.time = new Time();
     this.scene = new Scene();
-    this.resources = new Resources(sources);
     this.camera = new Camera();
     this.renderer = new Renderer();
     this.Composer = new Composer();
+    this.resources = new Resources(sources);
 
     this.world = new World();
     this.debug = new Debug();
-    this.audios = new Audios();
 
     /* Resize Event */
     this.sizes.on("resize", () => {
@@ -54,6 +53,9 @@ export default class Experience {
     this.time.on("update", () => {
       this.update();
     });
+
+    /* Setting Controls */
+    const controls = new Controls();
   }
 
   resize() {

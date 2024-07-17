@@ -12,6 +12,7 @@ export default class Submarine {
     this.resources = this.experience.resources;
     this.debug = this.experience.debug;
     this.physics = new Physics();
+
     /* Debug */
     if (this.debug.active) {
       this.startExperimenting = this.debug.ui.addFolder("startExperimenting");
@@ -20,7 +21,9 @@ export default class Submarine {
     }
 
     /* Setup */
-    this.resources = this.resources.items.submarineModel;
+    this.audio = this.resources.items.submarineAudio;
+    this.resource = this.resources.items.submarineModel;
+
     this.clock = new Clock();
 
     this.setModel();
@@ -28,8 +31,13 @@ export default class Submarine {
   }
 
   setModel() {
-    this.model = this.resources.scene;
+    this.model = this.resource.scene;
     this.model.scale.set(0.1, 0.1, 0.1);
+
+    // this.audio.setVolume(0.7);
+    // console.log(this.audio.getVolume());
+    this.model.add(this.audio);
+
     this.scene.add(this.model);
 
     this.model.traverse((child) => {

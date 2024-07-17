@@ -44,6 +44,9 @@ export default class Ocean {
     this.instance = new Water(this.geometry, this.materialOptions);
     this.instance.rotation.x = -Math.PI / 2;
 
+    this.audio = this.resources.items.oceanAudio;
+    this.instance.add(this.audio);
+
     this.scene.add(this.instance);
 
     this.sunDirectionUniform = this.instance.material.uniforms["sunDirection"];
