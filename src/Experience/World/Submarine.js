@@ -4,6 +4,7 @@ import Experience from "../Experience.js";
 
 import Physics from "../Physics/Physics.js";
 import { constants } from "../Physics/constants.js";
+import Controls from "../Controls/Controls.js";
 
 export default class Submarine {
   constructor() {
@@ -28,6 +29,7 @@ export default class Submarine {
 
     this.setModel();
     this.submarineMovements();
+    this.setControls();
   }
 
   setModel() {
@@ -338,5 +340,9 @@ export default class Submarine {
     if (constants.Go === true) {
       this.thrustPower();
     }
+  }
+
+  setControls() {
+    this.controls = new Controls(this.model);
   }
 }

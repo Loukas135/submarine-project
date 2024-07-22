@@ -11,8 +11,6 @@ import Time from "./Utils/Time.js";
 import Resources from "./Utils/Resources.js";
 import Debug from "./Utils/Debug.js";
 
-import Controls from "./Controls/Controls.js";
-
 import sources from "./sources.js";
 
 let instance = null;
@@ -53,9 +51,6 @@ export default class Experience {
     this.time.on("update", () => {
       this.update();
     });
-
-    /* Setting Controls */
-    const controls = new Controls();
   }
 
   resize() {

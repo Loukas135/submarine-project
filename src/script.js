@@ -1,6 +1,6 @@
 import Experience from "./Experience/Experience.js";
 
-import MobileControls from "./MobileControls.js";
+import MobileControls from "./Experience/Controls/MobileControls.js";
 
 const backdrop = document.getElementById("backdrop");
 const startButton = document.getElementById("start-button");
