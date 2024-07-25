@@ -24,9 +24,9 @@ export const constants = {
   acceleration: new Vector3(0, 0, 0),
   resultY: new Vector3(0, 0, 0),
   /* Thrust */
-  power: 150000,
+  power: 1500000000,
   n: 1,
-  D: 2,
+  D: 13,
   pitch: 1,
   resultZ: new Vector3(0, 0, 0),
   speedZ: new Vector3(0, 0, 0),
@@ -35,4 +35,10 @@ export const constants = {
   Cd: 0.82,
   A: 2,
   /* */
+  /*angle of rotation for submarine on XZ*/
+  finArea:100,
+  angle:90,
+  finAngle:90,
+  rotationAccelerationOnXZ:0,
+  rotationSpeedXZ:0
 };

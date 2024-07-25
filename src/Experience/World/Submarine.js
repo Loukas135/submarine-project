@@ -5,6 +5,8 @@ import Experience from "../Experience.js";
 import Physics from "../Physics/Physics.js";
 import { constants } from "../Physics/constants.js";
 import Controls from "../Controls/Controls.js";
+import { degToRad } from "three/src/math/MathUtils.js";
+import { cos } from "three/examples/jsm/nodes/Nodes.js";
 
 export default class Submarine {
   constructor() {
@@ -104,6 +106,14 @@ export default class Submarine {
           constants.Float = false;
         }
       });
+      this.debugFolder
+        .add(constants, "finAngle")
+        .min(0)
+        .max(360)
+        .step(1)
+        .onChange((value) => {
+          constants.finAngle = value;
+        });
       this.debugFolder.add(constants, "Go").onChange((value) => {
         if (value) {
           constants.Go = value;
@@ -179,39 +189,48 @@ export default class Submarine {
   }
 
   thrustPower(){
+    if(constants.angle>=360){
+      constants.angle=0;
+    }
+    constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
+      constants.finArea,constants.finAngle,constants.mass,constants.length)
+      constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
+      console.log(constants.rotationSpeedXZ);
+      constants.angle+=constants.rotationSpeedXZ*this.experience.time.threeDelta;
+      console.log("angle of rotation is   "+ constants.angle);
+      this.thrust = this.physics.thrustForceWithAngle(constants.Ro, constants.n, constants.pitch, constants.D,degToRad(constants.angle));
+      this.velocity = this.physics.propellerVelocity(this.thrust.x, constants.power);
+    this.drag = this.physics.dragForceWithAngle(constants.Cd, constants.Ro, constants.speedZ.x, constants.A,degToRad(constants.angle));
+    this.Xmove=this.thrust.x-this.drag.x;
+    this.Ymove=this.thrust.y-this.drag.y;
+    this.Zmove=this.thrust.z-this.drag.z
+    constants.resultZ.set(this.Xmove, 0, this.Zmove);
+    constants.acceleration.set(constants.resultZ.x/constants.mass, 0, constants.resultZ.z / constants.mass);
     
+    constants.speedZ.x = constants.speedZ.x + constants.acceleration.x * this.experience.time.threeDelta ;
+    constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.experience.time.threeDelta ;
 
-    this.thrust = this.physics.thrustForce(constants.Ro, constants.n, constants.pitch, constants.D);
-
-    this.velocity = this.physics.propellerVelocity(this.thrust.x, constants.power);
-  
-    this.drag = this.physics.dragForce(constants.Cd, constants.Ro, this.velocity, constants.A);
-    
-    this.result = constants.power - this.drag.x;
-    constants.resultZ.set(0, 0, this.result);
-
-    constants.acceleration.set(0, 0, constants.resultZ.z / constants.mass);
-    
-
-    if(constants.speedZ.z <= this.velocity){
+    if(constants.speedZ.x <= this.velocity && constants.speedZ.z <= this.velocity ){
       //console.log('speed before: ' + constants.speedZ.z);
 
-      constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.experience.time.threeDelta + 0.01;
     
       //console.log('speed after: ' + constants.speedZ.z);
 
-      if(this.model.position.z === 0){
-        this.model.position.z = -(0.5 * constants.acceleration.z * Math.pow(this.experience.time.threeDelta, 2)
-                                  + constants.speedZ.z * this.experience.time.threeDelta + this.model.position.z);
-      }
-      
-      this.model.position.z = -(0.5 * constants.acceleration.z * Math.pow(this.experience.time.threeDelta, 2)
-                                  + constants.speedZ.z * this.experience.time.threeDelta) + this.model.position.z;
+       if(this.model.position.z === 0){
+         this.model.position.z = -(0.5 * constants.acceleration.z * Math.pow(this.experience.time.threeDelta, 2)
+                                   + constants.speedZ.z * this.experience.time.threeDelta + this.model.position.z);
+       }
+       if(this.model.position.x==0){
+       this.model.position.x = -(0.5 * constants.acceleration.x * Math.pow(this.experience.time.threeDelta, 2)
+                                   + constants.speedZ.x * this.experience.time.threeDelta) + this.model.position.x;
+       }
+
     }
     //console.log('reached');
     this.model.position.z = -(constants.speedZ.z * this.experience.time.threeDelta) + this.model.position.z;    
-
-  }
+    this.model.position.x = (constants.speedZ.x * this.experience.time.threeDelta) + this.model.position.x;
+    console.log("x  " + this.model.position.x +"     "  + "     " +"z   " + this.model.position.z);
+    }
 
   state() {
     constants.resultY.set(
