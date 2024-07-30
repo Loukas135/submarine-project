@@ -36,7 +36,7 @@ export const constants = {
   A: 2,
   /* */
   /*angle of rotation for submarine on XZ*/
-  finArea:100,
+  finArea:115,
   angle:90,
   finAngle:90,
   rotationAccelerationOnXZ:0,

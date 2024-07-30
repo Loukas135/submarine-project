@@ -68,6 +68,14 @@ export default class Submarine {
         .min(-10)
         .max(10)
         .step(0.01);
+
+        this.initialFolder
+        .add(this.model.rotation, "z")
+        .min(0)
+        .max(360)
+        .step(0.01)
+        .onChange((value)=>
+        this.model.rotation.z=degToRad(-1*value))
       this.initialFolder
         .add(constants, "power")
         .min(900)
@@ -108,7 +116,7 @@ export default class Submarine {
       });
       this.debugFolder
         .add(constants, "finAngle")
-        .min(0)
+        .min(-360)
         .max(360)
         .step(1)
         .onChange((value) => {
@@ -189,31 +197,32 @@ export default class Submarine {
   }
 
   thrustPower(){
-    if(constants.angle>=360){
-      constants.angle=0;
-    }
-    constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
-      constants.finArea,constants.finAngle,constants.mass,constants.length)
-      constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
-      console.log(constants.rotationSpeedXZ);
-      constants.angle+=constants.rotationSpeedXZ*this.experience.time.threeDelta;
-      console.log("angle of rotation is   "+ constants.angle);
+  if(constants.angle>=360){
+    constants.angle=360%constants.angle
+  }
+  //constants.angle+=0.1
+    // if(constants.angle>=360){
+    //   constants.angle=0;
+    // }
+     constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
+       constants.finArea,constants.finAngle,constants.mass,constants.length)
+       constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
+       console.log(constants.rotationSpeedXZ);
+       constants.angle=constants.rotationSpeedXZ*this.experience.time.threeDelta;
+      this.model.rotation.y=degToRad(constants.angle-90);
+      console.log("terminal velocity"+ this.velocity);
       this.thrust = this.physics.thrustForceWithAngle(constants.Ro, constants.n, constants.pitch, constants.D,degToRad(constants.angle));
-      this.velocity = this.physics.propellerVelocity(this.thrust.x, constants.power);
+      this.velocity = Math.abs(this.physics.propellerVelocity(this.thrust.x, constants.power));
     this.drag = this.physics.dragForceWithAngle(constants.Cd, constants.Ro, constants.speedZ.x, constants.A,degToRad(constants.angle));
     this.Xmove=this.thrust.x-this.drag.x;
     this.Ymove=this.thrust.y-this.drag.y;
     this.Zmove=this.thrust.z-this.drag.z
     constants.resultZ.set(this.Xmove, 0, this.Zmove);
     constants.acceleration.set(constants.resultZ.x/constants.mass, 0, constants.resultZ.z / constants.mass);
-    
-    constants.speedZ.x = constants.speedZ.x + constants.acceleration.x * this.experience.time.threeDelta ;
-    constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.experience.time.threeDelta ;
-
     if(constants.speedZ.x <= this.velocity && constants.speedZ.z <= this.velocity ){
       //console.log('speed before: ' + constants.speedZ.z);
-
-    
+      constants.speedZ.x = constants.speedZ.x + constants.acceleration.x * this.experience.time.threeDelta ;
+    constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.experience.time.threeDelta ;
       //console.log('speed after: ' + constants.speedZ.z);
 
        if(this.model.position.z === 0){
