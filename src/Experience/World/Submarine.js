@@ -115,12 +115,20 @@ export default class Submarine {
         }
       });
       this.debugFolder
-        .add(constants, "finAngle")
+        .add(constants, "angle")
         .min(-360)
         .max(360)
         .step(1)
         .onChange((value) => {
-          constants.finAngle = value;
+          constants.angle = value;
+        });
+        this.debugFolder
+        .add(constants, "Yangle")
+        .min(-360)
+        .max(360)
+        .step(1)
+        .onChange((value) => {
+          constants.Yangle = value;
         });
       this.debugFolder.add(constants, "Go").onChange((value) => {
         if (value) {
@@ -204,25 +212,27 @@ export default class Submarine {
     // if(constants.angle>=360){
     //   constants.angle=0;
     // }
-     constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
-       constants.finArea,constants.finAngle,constants.mass,constants.length)
-       constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
-       console.log(constants.rotationSpeedXZ);
-       constants.angle=constants.rotationSpeedXZ*this.experience.time.threeDelta;
+    //  constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
+    //    constants.finArea,constants.finAngle,constants.mass,constants.length)
+    //    constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
+    //    console.log(constants.rotationSpeedXZ);
+    //    constants.angle=constants.rotationSpeedXZ*this.experience.time.threeDelta;
+    this.model.rotation.x=degToRad(constants.Yangle)
       this.model.rotation.y=degToRad(constants.angle-90);
       console.log("terminal velocity"+ this.velocity);
-      this.thrust = this.physics.thrustForceWithAngle(constants.Ro, constants.n, constants.pitch, constants.D,degToRad(constants.angle));
+      this.thrust = this.physics.thrustForceWithAngle(constants.Ro, constants.n, constants.pitch, constants.D,degToRad(constants.angle),degToRad(constants.Yangle));
       this.velocity = Math.abs(this.physics.propellerVelocity(this.thrust.x, constants.power));
-    this.drag = this.physics.dragForceWithAngle(constants.Cd, constants.Ro, constants.speedZ.x, constants.A,degToRad(constants.angle));
+    this.drag = this.physics.dragForceWithAngle(constants.Cd, constants.Ro, constants.speedZ.x, constants.A,degToRad(constants.angle),degToRad(constants.Yangle));
     this.Xmove=this.thrust.x-this.drag.x;
     this.Ymove=this.thrust.y-this.drag.y;
     this.Zmove=this.thrust.z-this.drag.z
-    constants.resultZ.set(this.Xmove, 0, this.Zmove);
-    constants.acceleration.set(constants.resultZ.x/constants.mass, 0, constants.resultZ.z / constants.mass);
+    constants.resultZ.set(this.Xmove, this.Ymove, this.Zmove);
+    constants.acceleration.set(constants.resultZ.x/constants.mass, constants.resultZ.y/constants.mass, constants.resultZ.z / constants.mass);
     if(constants.speedZ.x <= this.velocity && constants.speedZ.z <= this.velocity ){
       //console.log('speed before: ' + constants.speedZ.z);
       constants.speedZ.x = constants.speedZ.x + constants.acceleration.x * this.experience.time.threeDelta ;
     constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.experience.time.threeDelta ;
+    constants.speedZ.y = constants.speedZ.y + constants.acceleration.y * this.experience.time.threeDelta;
       //console.log('speed after: ' + constants.speedZ.z);
 
        if(this.model.position.z === 0){
@@ -238,7 +248,8 @@ export default class Submarine {
     //console.log('reached');
     this.model.position.z = -(constants.speedZ.z * this.experience.time.threeDelta) + this.model.position.z;    
     this.model.position.x = (constants.speedZ.x * this.experience.time.threeDelta) + this.model.position.x;
-    console.log("x  " + this.model.position.x +"     "  + "     " +"z   " + this.model.position.z);
+    this.model.position.y = -(constants.speedZ.y * this.experience.time.threeDelta) + this.model.position.y;
+    console.log("y  " + this.model.position.y +"     "  + "     " +"z   " + this.model.position.z);
     }
 
   state() {
