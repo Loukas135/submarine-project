@@ -12,7 +12,7 @@ import Resources from "./Utils/Resources.js";
 import Debug from "./Utils/Debug.js";
 
 import sources from "./sources.js";
-
+import submarine from "./World/Submarine.js";
 let instance = null;
 
 export default class Experience {

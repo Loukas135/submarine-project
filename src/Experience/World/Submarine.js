@@ -1,4 +1,5 @@
 import { Mesh, Clock } from "three";
+import * as THREE from "three";
 
 import Experience from "../Experience.js";
 
@@ -6,16 +7,16 @@ import Physics from "../Physics/Physics.js";
 import { constants } from "../Physics/constants.js";
 import Controls from "../Controls/Controls.js";
 import { degToRad } from "three/src/math/MathUtils.js";
-import { cos } from "three/examples/jsm/nodes/Nodes.js";
+import { cos, abs, ceil, round } from "three/examples/jsm/nodes/Nodes.js";
 
 export default class Submarine {
   constructor() {
+    this.lastFrameTime = 0;
     this.experience = new Experience();
     this.scene = this.experience.scene;
     this.resources = this.experience.resources;
     this.debug = this.experience.debug;
     this.physics = new Physics();
-
     /* Debug */
     if (this.debug.active) {
       this.startExperimenting = this.debug.ui.addFolder("startExperimenting");
@@ -141,33 +142,43 @@ export default class Submarine {
             this.initialFolder.hide();
             this.debugFolder.show();
             constants.startExperimenting = true;
+          
+            constants.VSubmarine=Math.round((constants.Beam/2)*(constants.Beam/2)*constants.length*Math.PI)
+            
+          
+            constants.h0= constants.Beam*0.74
+            constants.VSurface= Math.round(constants.VSubmarine*constants.h0/constants.Beam)
+          
+            constants.deltaV= constants.VSubmarine- constants.VSurface
+            constants.massSubmarine= 16646909
+            //constants.massTotlal=constants.massSubmarine+constants.massTanks;
+            constants.massTanks= 5849499
+            constants.massTotlal=  constants.massSubmarine+constants.massTanks
+            constants.balancemass= constants.VSubmarine*constants.Ro
 
-            constants.VSubmarine =
-              (constants.Beam / 2) *
-              (constants.Beam / 2) *
-              constants.length *
-              Math.PI;
-            constants.V =
-              (constants.massSubmarine - constants.massSubmarine * 0.12) /
-              constants.Ro;
-            constants.massSubmarine = constants.VSubmarine * constants.Ro;
-            constants.massTanks = constants.massSubmarine * 0.12;
-            constants.massTotlal = Math.round(
-              constants.massSubmarine - constants.massTanks
-            );
-            constants.mass = constants.V * constants.Ro;
-            constants.VTanks = constants.massTanks / constants.Ro;
-            constants.VTotlal = constants.VSubmarine - constants.VTanks;
-            constants.massCurrent = constants.VCurrent * constants.Ro;
-            constants.VCurrent =
-              (constants.massSubmarine - constants.massSubmarine * 0.12) /
-              constants.Ro;
-            // console.log(constants.massTotlal)
-            // console.log(constants.mass)
-            // console.log(constants.VTotlal/constants.massTotlal)
-            // console.log(constants.VSubmarine)
-            // console.log(constants.VTanks)
-            // console.log(constants.V)
+constants.massadd= constants.massTotlal- constants.balancemass
+        
+            
+              
+            
+            constants.hMax= 4000
+            constants.A= 1820
+  
+            constants.V= constants.VSurface
+            constants.mass= constants.massSubmarine
+            constants.h= constants.h0
+           
+            // console.log('++++++++++++++++++++++++++++++++++++++++++++')
+         
+            console.log('mass0                 '+ (constants.massadd))
+            // console.log('VVV                 '+ (constants.massadd ))
+            // console.log('mass0                 '+ (constants.massTotlal ))
+            // console.log('V0                    '+((constants.massSubmarine )- (constants.VSubmarine*constants.Ro)))
+            // console.log(constants.mass-(constants.Ro*constants.V) - (constants.Ro*constants.h*constants.A))
+            
+            
+            //  console.log('++++++++++++++++++++++++++++++++++++++++++++')
+              
           } else {
             constants.startExperimenting = false;
             this.initialFolder.show();
@@ -244,133 +255,219 @@ export default class Submarine {
     console.log("y  " + this.model.position.y +"     "  + "     " +"z   " + this.model.position.z);
     }
 
-  state() {
-    constants.resultY.set(
-      0,
-      this.physics.weightForce().y - this.physics.buoyancyForce().y,
-      0
-    );
-    constants.acceleration.set(0, constants.resultY.y / constants.mass, 0);
+  
 
-    //  console.log('weight' + this.physics.weightForce().y  )
-    //  console.log('buoyancy' + this.physics.buoyancyForce().y)
 
-    constants.speed1.y =
-      constants.speed.y +
-      constants.acceleration.y * this.clock.getElapsedTime();
+  rotate(){
+    this.deltaTime = this.clock.getElapsedTime() - this.lastFrameTime;
+    this.lastFrameTime = this.clock.getElapsedTime();
 
-    //  console.log('res : ' + constants.resultY.y)
-    //  console.log('acc : ' + constants.acceleration.y)
-    //  console.log('speed : ' + constants.speed1.y);
+    this.dragOnFin = this.physics.dragForceOnFin(1, 5, constants.speedZ.z, constants.finRotationAngle);
 
-    if (constants.resultY.y > 0) {
-      this.model.position.y = this.model.position.y - constants.speed1.y;
-      console.log("posssssssssssssssssssss" + this.model.position.y);
-    } else if (constants.resultY.y < 0) {
-      this.model.position.y = this.model.position.y - constants.speed1.y;
-      console.log(this.model.position.y);
-      // if(this.model.position.y)
-      // console.log(this.model.position.y )
-    } else {
-      this.model.position.y = this.model.position.y;
-    }
-    constants.speed.y = constants.speed1.y;
+
+    //this.angularAccelaration = this.physics.angularAccelaration(constants.mass, constants.length, this.dragOnFin.z);
+    this.angularAcc = this.physics.angularAccelaration(constants.mass, constants.length, this.dragOnFin.z);
+    //this.angularSpeed = this.physics.angularSpeed(this.angularAccelaration.x, this.deltaTime);
+    this.angularSpeed = this.physics.angularSpeed(this.angularAcc, this.deltaTime);
+    this.angularChangePerFrame = this.physics.finalAngle(this.angularSpeed, this.deltaTime);
+
+    this.thrustX = this.physics.thrustOnX(constants.resultZ.z, constants.finRotationAngle);
+    this.rotaionResult = this.thrustX.add(constants.resultZ);
+
+    //console.log(constants.Fz);
+    //console.log(constants.Fx);
+    //console.log(this.rotaionResult);
+
+    this.model.rotation.y += this.angularChangePerFrame * this.deltaTime
+    
+    console.log(this.model.rotation.y)
+    this.model.position.add(this.rotaionResult.multiplyScalar(-0.000001));
+    
+    //this.model.position.x -= (this.angularSpeed.x * 0.000001 * this.deltaTime);
+
+    // console.log('angularAccelaration ' + this.angularAccelaration.x * 0.0000001);
+    // console.log('angularSpeed ' + this.angularSpeed.x * 0.000000001);
+    // console.log('angularChangePerFrame ' + this.angularChangePerFrame.x * 0.000000001);
+    // console.log('delta time ' + this.deltaTime);
   }
+
+  state() {
+    const result=  Math.floor(this.physics.weightForce().y ) -  Math.floor (this.physics.buoyancyForce().y)
+    const acc= result/constants.mass
+      constants.resultY.y=result ;
+      constants.acceleration.y= acc ;
+     
+     constants.speed1.y=constants.speed.y+ (constants.acceleration.y*this.clock.getElapsedTime());
+    //  console.log('res : '+constants.resultY.y)
+    //  console.log('speed:' + constants.speed1.y )
+ 
+     if (constants.resultY.y > 0 ) {
+     this.model.position.y= -constants.speed1.y*this.clock.getElapsedTime() 
+    //  console.log('posssssssssssssssssssss'+this.model.position.y)
+    //  console.log('destanceeeeeeeeeeeeeeee'+ -constants.speed1.y*this.clock.getElapsedTime() )
+     } else if (constants.resultY.y < 0 ) {  
+       this.model.position.y= -constants.speed1.y*this.clock.getElapsedTime() 
+      //  console.log('posssssssssssssssssssss'+this.model.position.y)
+      //  console.log('destanceeeeeeeeeeeeeeee'+ -constants.speed1.y*this.clock.getElapsedTime() )
+       
+     } else {
+       this.model.position.y = this.model.position.y;
+     }
+     constants.h=constants.h0 -this.model.position.y
+ 
+     constants.speed.y=constants.speed1.y
+   }
 
   update() {
     this.experience.camera;
-    if (constants.Diving === true && constants.Float === false) {
-      console.log("Diving");
-      if (true) {
-        if (constants.massTotlal > constants.mass) {
-          //  constants.mass+=0.2
-          constants.mass = (constants.V + 0.001) * constants.Ro;
-          if (constants.VTotlal > constants.V) {
-            constants.V += 0.0005;
-          }
+    if(constants.startExperimenting){
+      this.state();
+      // console.log('&&&&&&&&&&&&&&&&&hb'+(parseFloat(constants.h.toFixed(1))))
 
-          //  console.log('Divvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvving')
-          //  console.log('masssssssssssssssss'+constants.mass)
-          //  console.log('vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv'+constants.V)
-          this.state();
-        }
-        console.log("haha" + constants.resultY.y);
-      }
-      // if(mass < 1500000)
-      // constants.mass += 100000
-      // if(V< 20000){
-      //   constants.V +=1000
-      // }
     }
-    if (constants.Diving === false && constants.Float === false) {
-      //console.log('abdmass' + constants.resultY.y)
-      if (constants.resultY.y > 0) {
-        console.log("NotDiving");
-        if (constants.mass > constants.massCurrent) {
-          constants.mass = (constants.V - 0.0001) * constants.Ro;
-          if (constants.VSubmarine > constants.V) {
-            constants.V = (constants.mass + 0.01) / constants.Ro;
-            // constants.V+=  0.0001
-            console.log("NotttttttttttttttttttttttttDiving");
-            this.state();
-            console.log("ressssssssssssss" + constants.resultY.y);
-          }
-        }
-        // constants.mass= constants.V*constants.Ro
-        constants.resultY.y = Math.round(constants.resultY.y);
-        console.log("floor" + constants.resultY.y);
-        console.log("Totlal" + constants.VTotlal);
-        console.log(constants.V);
-      }
 
-      if (constants.resultY.y < 0) {
-        // if(constants.massCurrent > constants.mass){
-        //   //  constants.mass+=0.2
-        //   constants.mass= (constants.V+0.001)*constants.Ro
-        //   this.state();
-        // }
-        // constants.V= constants.mass/constants.Ro
-      }
+    if(constants.h< constants.Beam  && constants.Float===true && constants.Diving === false  && constants.h> (constants.h0-0.4) ){
 
-      // console.log('resulty'+constants.resultY.y)
-      // constants.resultY.y= Math.round(constants.resultY.y)
+          //  console.log(constants.resultY.y)  
+          if(constants.V>constants.VSurface){
+            constants.V=Math.round(constants.V*(constants.h/constants.Beam))
+
+            // constants.V=Math.round(constants.V - ((constants.deltaV+((0.2/constants.Beam)*constants.VSubmarine))*0.1))
+           }
+            if ( constants.mass> constants.massSubmarine ) {
+              // constants.mass= Math.round(constants.mass) -((constants.massTanks-constants.massadd)*0.11)
+              constants.mass= (constants.V*constants.Ro)-constants.massadd
+            }
+             
+      
+      //       console.log(constants.VSurface)
+      
     }
-    if (constants.Float === true && constants.Diving === false) {
-      if (true) {
-        //console.log('abdmass' + constants.V)
-        console.log("abdVV" + constants.VTotlal);
-        if (constants.V < constants.VTotlal) {
-          //  constants.mass+=0.2
-          constants.V = (constants.mass + 0.1) / constants.Ro;
-          console.log("Divvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvving");
-          console.log("masssssssssssssssss" + constants.mass);
-          console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv" + constants.V);
-          this.state();
-        }
-        constants.mass = constants.V * constants.Ro;
+    if((parseFloat(constants.h.toFixed(1)))=== (parseFloat((constants.h0-0.4).toFixed(1))) && constants.resultY.y<0){
+      constants.V=Math.round(constants.V*(constants.h/constants.Beam))
+      // constants.V=constants.VSurface
+      constants.mass=(constants.V*constants.Ro)+constants.massadd
+      console.log((constants.V*constants.Ro ) )
+      console.log((constants.mass) )
 
-        //  constants.V= constants.mass/constants.Ro
-      }
     }
-    // if(constants.Float===false && constants.Diving === false){
-    //   if(Math.round(constants.resultY.y) !==0)
-    //   if(constants.massTotlal > constants.mass){
-    //     constants.mass= (constants.V+0.001)*constants.Ro
+    if((parseFloat(constants.h.toFixed(1)))=== (parseFloat((constants.h0).toFixed(1))) && (Math.round(constants.resultY.y))>0){
+      constants.V=constants.VSurface
+      constants.mass=constants.massSubmarine
+      console.log('++++++++++++++++' )
 
-    //     console.log('Nottttttttttttttttttfloattttttttttttttttttttttt')
-    //     this.state()
+    }
 
-    //   }
-    // }
+    if(constants.Diving===true && constants.Float===false){
+      // console.log('VVVVV++++++'+(constants.mass))
+      // console.log('VSubmarine++++++'+((constants.massSubmarine+constants.massTanks)))
+     
+            if(constants.V < constants.VSubmarine ){
+                
+                constants.V = constants.V + (constants.deltaV*0.1)
+                // console.log('V++') 
+                // console.log(Math.floor(constants.V*constants.Ro*constants.G))  
+                if(Math.round(constants.mass) < (constants.massTotlal)){
+                  constants.mass = constants.mass + ((constants.massTanks)*0.1)
+                  // console.log('m++') 
+                  // console.log(Math.floor(constants.mass*constants.G)) 
+                }
+                  
+                }
+               
+                if(Math.round(constants.V) === constants.VSubmarine && constants.mass < (constants.massTotlal) ){
+                  constants.mass = constants.mass + ((constants.massadd)*0.1)
+                  // console.log('+++++massss+++++++++++'+constants.mass)
+                  // console.log('+++++massss+++++++++++'+(constants.mass+constants.massadd))
+                }
+                // this.state()
+                // if((constants.mass<constants.massTotlal)  && constants.resultY.y===0){
+                //   constants.mass = constants.mass +1
+                // }
+             
+                // console.log('hhh++++++'+(constants.h))
 
-    // if(this.model.position.y >0.3){
+        
+      
 
-    //   this.state()
-    // }
+    }
+   
+      
+      
+     
+    
+    if(constants.Diving===false && constants.Float===false&& constants.startExperimenting){
+      
+      if(constants.mass> constants.balancemass && constants.resultY.y >0){
+        constants.mass= constants.mass- (constants.massadd*0.1)
+              }
+              if(Math.round(constants.mass) < (constants.massTotlal) && constants.resultY.y<0 ){
+                constants.mass= constants.mass+ (constants.massadd*0.1)
+                      }
+  
+    
+          
+
+        }
+        
+          
+         
+      
+      
+   
+        
+        if(constants.Float===true && constants.Diving === false&& constants.h>constants.Beam ){
+      if((constants.mass+ constants.massadd)> (constants.balancemass) ){
+        // console.log('abdmass'+(constants.mass- constants.massTanks))
+        // console.log('abdsub'+constants.massSubmarine)
+        constants.mass= constants.mass- ((constants.massadd)*0.05)
+        //  constants.h>= constants.h0   
+        }
+      }
+       
+      
+        
+    
+  
 
     if (constants.Go === true) {
       this.thrustPower();
     }
+    console.log('position: '+ this.model.position.z);
+    this.deltaTime = this.clock.getElapsedTime() - this.lastFrameTime;
+    this.lastFrameTime = this.clock.getElapsedTime();
+
+    this.thrust = this.physics.thrustForce(constants.Ro, constants.n, constants.pitch, constants.D);
+
+    this.velocity = this.physics.propellerVelocity(this.thrust.x, constants.power);
+  
+    this.drag = this.physics.dragForce(constants.Cd, constants.Ro, this.velocity, constants.A);
+    
+    this.result = constants.power - this.drag.x;
+    constants.resultZ.set(0, 0, this.result);
+
+    constants.acceleration.set(0, 0, constants.resultZ.z / constants.mass);
+    
+
+    if(constants.speedZ.z <= this.velocity){
+      //console.log('speed before: ' + constants.speedZ.z);
+
+      constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.deltaTime + 0.01;
+    
+      //console.log('speed after: ' + constants.speedZ.z);
+
+      if(this.model.position.z === 0){
+        this.model.position.z = -(0.5 * constants.acceleration.z * Math.pow(this.deltaTime, 2)
+                                  + constants.speedZ.z * this.deltaTime + this.model.position.z);
+      }
+      
+      this.model.position.z = -(0.5 * constants.acceleration.z * Math.pow(this.deltaTime, 2)
+                                  + constants.speedZ.z * this.deltaTime) + this.model.position.z;
+    }
+    //console.log('reached');
+    this.model.position.z = -(constants.speedZ.z * this.deltaTime) + this.model.position.z;    
+
+
   }
 
   setControls() {
