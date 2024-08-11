@@ -111,15 +111,15 @@ export default class Submarine {
         .add(constants, "angle")
         .min(-360)
         .max(360)
-        .step(1)
+        .step(0.001)
         .onChange((value) => {
           constants.angle = value;
         });
         this.debugFolder
         .add(constants, "Yangle")
-        .min(-360)
-        .max(360)
-        .step(1)
+        .min(-90)
+        .max(90)
+        .step(0.001)
         .onChange((value) => {
           constants.Yangle = value;
         });
@@ -297,16 +297,16 @@ constants.massadd= constants.massTotlal- constants.balancemass
       constants.resultY.y=result ;
       constants.acceleration.y= acc ;
      
-     constants.speed1.y=constants.speed.y+ (constants.acceleration.y*this.clock.getElapsedTime());
+     constants.speed1.y=constants.speed.y+ (constants.acceleration.y*this.experience.time.threeDelta*100000);
     //  console.log('res : '+constants.resultY.y)
     //  console.log('speed:' + constants.speed1.y )
  
      if (constants.resultY.y > 0 ) {
-     this.model.position.y= -constants.speed1.y*this.clock.getElapsedTime() 
+     this.model.position.y= -constants.speed1.y*this.experience.time.threeDelta
     //  console.log('posssssssssssssssssssss'+this.model.position.y)
     //  console.log('destanceeeeeeeeeeeeeeee'+ -constants.speed1.y*this.clock.getElapsedTime() )
      } else if (constants.resultY.y < 0 ) {  
-       this.model.position.y= -constants.speed1.y*this.clock.getElapsedTime() 
+       this.model.position.y= -constants.speed1.y*this.experience.time.threeDelta 
       //  console.log('posssssssssssssssssssss'+this.model.position.y)
       //  console.log('destanceeeeeeeeeeeeeeee'+ -constants.speed1.y*this.clock.getElapsedTime() )
        
@@ -431,43 +431,11 @@ constants.massadd= constants.massTotlal- constants.balancemass
   
 
     if (constants.Go === true) {
-      this.thrustPower();
-    }
-    console.log('position: '+ this.model.position.z);
-    this.deltaTime = this.clock.getElapsedTime() - this.lastFrameTime;
-    this.lastFrameTime = this.clock.getElapsedTime();
-
-    this.thrust = this.physics.thrustForce(constants.Ro, constants.n, constants.pitch, constants.D);
-
-    this.velocity = this.physics.propellerVelocity(this.thrust.x, constants.power);
-  
-    this.drag = this.physics.dragForce(constants.Cd, constants.Ro, this.velocity, constants.A);
-    
-    this.result = constants.power - this.drag.x;
-    constants.resultZ.set(0, 0, this.result);
-
-    constants.acceleration.set(0, 0, constants.resultZ.z / constants.mass);
-    
-
-    if(constants.speedZ.z <= this.velocity){
-      //console.log('speed before: ' + constants.speedZ.z);
-
-      constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.deltaTime + 0.01;
-    
-      //console.log('speed after: ' + constants.speedZ.z);
-
-      if(this.model.position.z === 0){
-        this.model.position.z = -(0.5 * constants.acceleration.z * Math.pow(this.deltaTime, 2)
-                                  + constants.speedZ.z * this.deltaTime + this.model.position.z);
+      if(constants.n<=10){
+        constants.n+=1;
       }
-      
-      this.model.position.z = -(0.5 * constants.acceleration.z * Math.pow(this.deltaTime, 2)
-                                  + constants.speedZ.z * this.deltaTime) + this.model.position.z;
     }
-    //console.log('reached');
-    this.model.position.z = -(constants.speedZ.z * this.deltaTime) + this.model.position.z;    
-
-
+    this.thrustPower();
   }
 
   setControls() {

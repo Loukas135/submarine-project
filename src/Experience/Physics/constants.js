@@ -1,5 +1,6 @@
-import { Vector3 } from "three";
 
+import * as THREE from "three";
+import { degToRad } from "three/src/math/MathUtils.js";
 export const constants = {
   startExperimenting: false,
   Diving: false,
@@ -44,9 +45,9 @@ export const constants = {
   hMax:0,
   /* Thrust */
   power: 1500000000,
-  n: 1,
-  D: 13,
-  pitch: 1,
+  n: 0,
+  D: 2,
+  pitch: 2,
   resultZ: new THREE.Vector3(0, 0, 0),
   speedZ: new THREE.Vector3(0, 0, 0),
   /* */
