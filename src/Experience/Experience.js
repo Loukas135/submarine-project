@@ -62,8 +62,11 @@ export default class Experience {
     this.camera.update();
     this.world.update();
     // this.renderer.update();
-    this.Composer.update();
+   
 
+    
+      this.Composer.update();
+    
     if (this.world.submarine) {
       this.world.submarine.update();
     }

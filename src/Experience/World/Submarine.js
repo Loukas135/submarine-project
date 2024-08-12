@@ -150,27 +150,27 @@ export default class Submarine {
             constants.VSurface= Math.round(constants.VSubmarine*constants.h0/constants.Beam)
           
             constants.deltaV= constants.VSubmarine- constants.VSurface
-            constants.massSubmarine= 16646909
+            constants.massSubmarine=16646909
             //constants.massTotlal=constants.massSubmarine+constants.massTanks;
-            constants.massTanks= 5849499
+            constants.massTanks= 5879400
             constants.massTotlal=  constants.massSubmarine+constants.massTanks
             constants.balancemass= constants.VSubmarine*constants.Ro
 
 constants.massadd= constants.massTotlal- constants.balancemass
         
             
-              
-            
-            constants.hMax= 4000
+              console.log('massadd : '+constants.massadd)
+            constants.Dinternal= constants.Beam- constants.tWall
+            constants.hMax= this.physics.pressureMaterialForce().y/(constants.G*constants.Ro)
             constants.A= 1820
   
             constants.V= constants.VSurface
             constants.mass= constants.massSubmarine
             constants.h= constants.h0
-           
+            
             // console.log('++++++++++++++++++++++++++++++++++++++++++++')
          
-            console.log('mass0                 '+ (constants.massadd))
+            console.log('hmax                 '+ ((constants.hMax)))
             // console.log('VVV                 '+ (constants.massadd ))
             // console.log('mass0                 '+ (constants.massTotlal ))
             // console.log('V0                    '+((constants.massSubmarine )- (constants.VSubmarine*constants.Ro)))
@@ -192,7 +192,7 @@ constants.massadd= constants.massTotlal- constants.balancemass
     document.addEventListener("keydown", (event) => {
       this.elapsedTime = this.clock.getElapsedTime();
 
-      console.log(this.elapsedTime);
+      // console.log(this.elapsedTime);
 
       if (event.key === "w" || event.key === "W") {
       } else if (event.key === "a" || event.key === "A") {
@@ -222,7 +222,7 @@ constants.massadd= constants.massTotlal- constants.balancemass
     //    constants.angle=constants.rotationSpeedXZ*this.experience.time.threeDelta;
     this.model.rotation.x=degToRad(constants.Yangle)
       this.model.rotation.y=degToRad(constants.angle-90);
-      console.log("terminal velocity"+ this.velocity);
+      // console.log("terminal velocity"+ this.velocity);
       this.thrust = this.physics.thrustForceWithAngle(constants.Ro, constants.n, constants.pitch, constants.D,degToRad(constants.angle),degToRad(constants.Yangle));
       this.velocity = Math.abs(this.physics.propellerVelocity(this.thrust.x, constants.power));
     this.drag = this.physics.dragForceWithAngle(constants.Cd, constants.Ro, constants.speedZ.x, constants.A,degToRad(constants.angle),degToRad(constants.Yangle));
@@ -252,7 +252,7 @@ constants.massadd= constants.massTotlal- constants.balancemass
     this.model.position.z = -(constants.speedZ.z * this.experience.time.threeDelta) + this.model.position.z;    
     this.model.position.x = (constants.speedZ.x * this.experience.time.threeDelta) + this.model.position.x;
     this.model.position.y = -(constants.speedZ.y * this.experience.time.threeDelta) + this.model.position.y;
-    console.log("y  " + this.model.position.y +"     "  + "     " +"z   " + this.model.position.z);
+    // console.log("y  " + this.model.position.y +"     "  + "     " +"z   " + this.model.position.z);
     }
 
   
@@ -280,7 +280,8 @@ constants.massadd= constants.massTotlal- constants.balancemass
 
     this.model.rotation.y += this.angularChangePerFrame * this.deltaTime
     
-    console.log(this.model.rotation.y)
+    // console.log(this.model.rotation.y)
+
     this.model.position.add(this.rotaionResult.multiplyScalar(-0.000001));
     
     //this.model.position.x -= (this.angularSpeed.x * 0.000001 * this.deltaTime);
@@ -297,16 +298,16 @@ constants.massadd= constants.massTotlal- constants.balancemass
       constants.resultY.y=result ;
       constants.acceleration.y= acc ;
      
-     constants.speed1.y=constants.speed.y+ (constants.acceleration.y*this.experience.time.threeDelta*100000);
+     constants.speed1.y=constants.speed.y+ (constants.acceleration.y*this.experience.time.threeDelta);
     //  console.log('res : '+constants.resultY.y)
     //  console.log('speed:' + constants.speed1.y )
  
      if (constants.resultY.y > 0 ) {
-     this.model.position.y= -constants.speed1.y*this.experience.time.threeDelta
+     this.model.position.y= -constants.speed1.y*constants.eTime
     //  console.log('posssssssssssssssssssss'+this.model.position.y)
     //  console.log('destanceeeeeeeeeeeeeeee'+ -constants.speed1.y*this.clock.getElapsedTime() )
      } else if (constants.resultY.y < 0 ) {  
-       this.model.position.y= -constants.speed1.y*this.experience.time.threeDelta 
+       this.model.position.y= -constants.speed1.y*constants.eTime
       //  console.log('posssssssssssssssssssss'+this.model.position.y)
       //  console.log('destanceeeeeeeeeeeeeeee'+ -constants.speed1.y*this.clock.getElapsedTime() )
        
@@ -321,7 +322,19 @@ constants.massadd= constants.massTotlal- constants.balancemass
   update() {
     this.experience.camera;
     if(constants.startExperimenting){
+if(constants.resultY.y !==0 ){
+  constants.eTime= constants.eTime + this.experience.time.threeDelta
+}
+console.log('TTTTTiiiimmmmmmmwmm'+constants.eTime)
+
+     console.log('posssssssssssssssssssss'+this.model.position.y)
+           console.log('res : '+constants.resultY.y)  
+           console.log('speed:  '+ constants.speed1.y)
+
       this.state();
+      if(constants.hMax< constants.h){
+        console.log('Bumb ------------------------------------------------------------------------------------------')
+      }
       // console.log('&&&&&&&&&&&&&&&&&hb'+(parseFloat(constants.h.toFixed(1))))
 
     }
@@ -341,9 +354,9 @@ constants.massadd= constants.massTotlal- constants.balancemass
              
       
       //       console.log(constants.VSurface)
-      
+
     }
-    if((parseFloat(constants.h.toFixed(1)))=== (parseFloat((constants.h0-0.4).toFixed(1))) && constants.resultY.y<0){
+    if((parseFloat(constants.h.toFixed(1)))=== (parseFloat((constants.h0-0.4).toFixed(1))) && constants.resultY.y<0 && constants.speed1.y>100){
       constants.V=Math.round(constants.V*(constants.h/constants.Beam))
       // constants.V=constants.VSurface
       constants.mass=(constants.V*constants.Ro)+constants.massadd
@@ -355,6 +368,14 @@ constants.massadd= constants.massTotlal- constants.balancemass
       constants.V=constants.VSurface
       constants.mass=constants.massSubmarine
       console.log('++++++++++++++++' )
+
+    }
+    if((parseFloat(constants.h.toFixed(1)))=== (parseFloat((constants.h0).toFixed(1))) && constants.resultY.y<0 && constants.speed1.y<100){
+      constants.V=constants.VSurface
+      // constants.V=constants.VSurface
+      constants.mass=constants.massSubmarine
+      console.log((constants.V*constants.Ro ) )
+      console.log((constants.mass) )
 
     }
 

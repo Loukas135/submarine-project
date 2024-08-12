@@ -14,6 +14,17 @@ export default class Physics {
     this.buoyancy = constants.Ro * constants.G * constants.V;
     return new THREE.Vector3(0, this.buoyancy, 0);
   }
+
+   pressureForce() {
+    this.pressure = (constants.Ro * constants.G * constants.h) +101,325;
+    return new THREE.Vector3(0, this.pressure, 0);
+  }
+  pressureMaterialForce() {
+    this.pressureMaterial = (2*constants.segma * constants.tWall ) /constants.Dinternal;
+    return new THREE.Vector3(0, this.pressureMaterial, 0);
+  }
+
+
   sine(angle){
     let x=Math.sin(angle*Math.PI/180)
     return parseFloat(x.toFixed(2));
