@@ -34,30 +34,44 @@ export default class Controls {
     });
   }
 
-  moveForwardEvent() {
+  moveBackwardEvent() {
     // this.modelPosition.z -= 0.01;
     // this.cameraPosition.z -= 0.01;
     // this.orbitControls.target.z -= 0.01;
-
-    constants.Yangle += 0.01;
+    if(constants.Yangle<90)
+    constants.Yangle +=0.1;
+  if(constants.Yangle>=90){
+    constants.Yangle=0.1;
+  }
   }
 
   moveRightwardEvent() {
-    constants.angle += 0.01;
+    constants.angle -=0.1;
   }
 
   moveLeftwardEvent() {
-    constants.angle -= 0.01;
+    constants.angle +=0.1;
   }
 
-  moveBackwardEvent() {
+  moveForwardEvent() {
     // this.cameraPosition.z += 0.01;
-    constants.Yangle = 0.01;
+    if(constants.Yangle>-90){
+      constants.Yangle -=0.1;
+    }
+    if(constants.Yangle<=-90){
+      constants.Yangle=-90;
+    }
   }
 
-  dive() {}
+  dive() {
+    constants.Float=false;
+    constants.Diving=true;
+  }
 
-  arise() {}
+  arise() {
+    constants.Diving=false;
+    constants.Float=true;
+  }
 
   addKeyboardEventListeners() {
     const pressedKeys = {};
@@ -90,6 +104,12 @@ export default class Controls {
       if (pressedKeys["f"] || pressedKeys["F"]) {
         this.dive();
       }
+      if (pressedKeys["g"] || pressedKeys["G"]) {
+        constants.Go=true;
+      }
+      if (pressedKeys["p"] || pressedKeys["P"]) {
+        constants.Go=false;
+            }
     });
 
     /* Handle relese the button */

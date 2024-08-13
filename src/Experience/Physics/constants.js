@@ -50,7 +50,7 @@ export const constants = {
   /* Thrust */
   power: 1500000000,
   n: 0,
-  D: 2,
+  D: 4,
   pitch: 2,
   resultZ: new THREE.Vector3(0, 0, 0),
   speedZ: new THREE.Vector3(0, 0, 0),
@@ -60,10 +60,10 @@ export const constants = {
   A: 2,
   /* */
   /*angle of rotation for submarine on XZ*/
-  finArea : 115,
+  finArea : 11,
   angle : 90,
   Yangle : 0,
-  finAngle : 90,
+  finAngle : 0,
   finAngleUpDown : 0,
   rotationAccelerationOnXZ: 0 ,
   rotationSpeedXZ: 0

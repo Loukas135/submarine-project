@@ -31,7 +31,7 @@ export default class Submarine {
     this.clock = new Clock();
 
     this.setModel();
-    this.submarineMovements();
+    //this.submarineMovements();
     this.setControls();
   }
 
@@ -107,29 +107,29 @@ export default class Submarine {
           constants.Float = false;
         }
       });
-      this.debugFolder
-        .add(constants, "angle")
-        .min(-360)
-        .max(360)
-        .step(0.001)
-        .onChange((value) => {
-          constants.angle = value;
-        });
-        this.debugFolder
-        .add(constants, "Yangle")
-        .min(-90)
-        .max(90)
-        .step(0.001)
-        .onChange((value) => {
-          constants.Yangle = value;
-        });
-      this.debugFolder.add(constants, "Go").onChange((value) => {
-        if (value) {
-          constants.Go = value;
-        } else {
-          constants.Go = false;
-        }
-      });
+      // this.debugFolder
+      //   .add(constants, "angle")
+      //   .min(-360)
+      //   .max(360)
+      //   .step(0.001)
+      //   .onChange((value) => {
+      //     constants.angle = value;
+      //   });
+      //   this.debugFolder
+      //   .add(constants, "Yangle")
+      //   .min(-90)
+      //   .max(90)
+      //   .step(0.001)
+      //   .onChange((value) => {
+      //     constants.Yangle = value;
+      //   });
+      // this.debugFolder.add(constants, "Go").onChange((value) => {
+      //   if (value) {
+      //     constants.Go = value;
+      //   } else {
+      //     constants.Go = false;
+      //   }
+     // });
       if (constants.startExperimenting === false) {
         this.debugFolder.hide();
       }
@@ -188,24 +188,24 @@ constants.massadd= constants.massTotlal- constants.balancemass
     }
   }
 
-  submarineMovements() {
-    document.addEventListener("keydown", (event) => {
-      this.elapsedTime = this.clock.getElapsedTime();
+  // submarineMovements() {
+  //   document.addEventListener("keydown", (event) => {
+  //     this.elapsedTime = this.clock.getElapsedTime();
 
-      // console.log(this.elapsedTime);
+  //     // console.log(this.elapsedTime);
 
-      if (event.key === "w" || event.key === "W") {
-      } else if (event.key === "a" || event.key === "A") {
-        this.model.rotation.y += 0.005;
-        this.model.position.x -= 0.005;
-      } else if (event.key === "s" || event.key === "S") {
-        this.model.position.z += 0.1;
-      } else if (event.key === "d" || event.key === "D") {
-        this.model.rotation.y -= 0.005;
-        this.model.position.x += 0.005;
-      }
-    });
-  }
+  //     if (event.key === "w" || event.key === "W") {
+  //     } else if (event.key === "a" || event.key === "A") {
+  //       this.model.rotation.y += 0.005;
+  //       this.model.position.x -= 0.005;
+  //     } else if (event.key === "s" || event.key === "S") {
+  //       this.model.position.z += 0.1;
+  //     } else if (event.key === "d" || event.key === "D") {
+  //       this.model.rotation.y -= 0.005;
+  //       this.model.position.x += 0.005;
+  //     }
+  //   });
+  // }
 
   thrustPower(){
   if(constants.angle>=360){
@@ -215,11 +215,11 @@ constants.massadd= constants.massTotlal- constants.balancemass
     // if(constants.angle>=360){
     //   constants.angle=0;
     // }
-    //  constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
-    //    constants.finArea,constants.finAngle,constants.mass,constants.length)
-    //    constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
-    //    console.log(constants.rotationSpeedXZ);
-    //    constants.angle=constants.rotationSpeedXZ*this.experience.time.threeDelta;
+      // constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
+      //   constants.finArea,constants.finAngle,constants.mass,constants.length)
+      //  constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
+      //   console.log(constants.rotationSpeedXZ);
+      //   constants.angle+=constants.rotationSpeedXZ*this.experience.time.threeDelta;
     this.model.rotation.x=degToRad(constants.Yangle)
       this.model.rotation.y=degToRad(constants.angle-90);
       // console.log("terminal velocity"+ this.velocity);
