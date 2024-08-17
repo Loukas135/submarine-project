@@ -34,50 +34,26 @@ export default class Controls {
     });
   }
 
-  moveForwardEvent() {
-    gsap.to(this.modelPosition, {
-      duration: 2,
-      z: this.modelPosition.z - 3,
-    });
-
-    gsap.to(this.cameraPosition, {
-      duration: 2,
-      z: this.cameraPosition.z - 3,
-    });
-
-    gsap.to(this.orbitControls.target, {
-      duration: 2,
-      z: this.modelPosition.z - 3,
-    });
+  moveBackwardEvent() {
+    // this.modelPosition.z -= 0.01;
+    // this.cameraPosition.z -= 0.01;
+    // this.orbitControls.target.z -= 0.01;
+    if(this.model.position.y<0){
+      if(constants.Yangle<90)
+        constants.Yangle +=0.1;
+      if(constants.Yangle>=90){
+        constants.Yangle=0.1;
+      }
+    }
+    
   }
 
   moveRightwardEvent() {
-    gsap.to(this.modelRotation, {
-      duration: 2,
-      y: this.modelRotation.y - Math.PI / 10,
-    });
-
-    gsap.to(this.cameraRotation, {
-      duration: 2,
-      y: this.cameraRotation.y - Math.PI / 10,
-    });
-
-    // gsap.to(this.orbitControls.target, {
-    //   duration: 2,
-    //   z: this.modelPosition.z - 3
-    // });
+    constants.finAngle+=1;
   }
 
   moveLeftwardEvent() {
-    gsap.to(this.modelRotation, {
-      duration: 2,
-      y: this.modelRotation.y + Math.PI / 10,
-    });
-
-    gsap.to(this.cameraPosition, {
-      duration: 2,
-      y: this.modelRotation.y + Math.PI / 10,
-    });
+    constants.finAngle -=1;
   }
 
   moveBackwardEvent() {
@@ -156,7 +132,51 @@ export default class Controls {
     /* Pressing & Holding the key */
     document.addEventListener("keydown", (event) => this.handlePress(event));
 
-    /* Releasing the key */
-    document.addEventListener("keyup", (event) => this.handleRelease(event));
+    /* Event to listen to key presses */
+    document.addEventListener("keydown", (event) => {
+      pressedKeys[event.key] = true;
+
+      /* To handle each key */
+      if (pressedKeys["w"] || pressedKeys["W"]) {
+        this.moveForwardEvent();
+      }
+
+      if (pressedKeys["a"] || pressedKeys["A"]) {
+        this.moveLeftwardEvent();
+      }
+
+      if (pressedKeys["s"] || pressedKeys["S"]) {
+        this.moveBackwardEvent();
+      }
+
+      if (pressedKeys["d"] || pressedKeys["D"]) {
+        this.moveRightwardEvent();
+      }
+
+      if (pressedKeys["e"] || pressedKeys["E"]) {
+        this.arise();
+      }
+
+      if (pressedKeys["f"] || pressedKeys["F"]) {
+        this.dive();
+      }
+      if (pressedKeys["g"] || pressedKeys["G"]) {
+        constants.Go=true;
+      }
+      if (pressedKeys["p"] || pressedKeys["P"]) {
+        constants.Go=false;
+            }
+    });
+
+    /* Handle relese the button */
+    document.addEventListener("keyup", (event) => {
+      pressedKeys[event.key] = false;
+      if(event.key=='A' ||event.key=='a'){
+        constants.finAngle=90;
+      }
+      if(event.key=='D' || event.key=='d'){
+        constants.finAngle=90;
+      }
+    });
   }
 }

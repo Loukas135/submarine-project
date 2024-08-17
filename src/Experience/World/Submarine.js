@@ -92,6 +92,15 @@ export default class Submarine {
         .onChange((value) => {
           constants.massSubmarine = value;
         });
+        this.debugFolder.add(constants, "finAngle")
+        .min(0)
+        .max(180)
+        .step(1)
+        .onChange((value) => {
+           {
+            constants.finAngle = value;
+          }
+        });
       this.initialFolder
         .add(constants, "V")
         .min(10)
@@ -113,6 +122,7 @@ export default class Submarine {
         } else {
           constants.Float = false;
         }
+        
       });
       this.debugFolder
         .add(constants, "angle")
@@ -208,18 +218,20 @@ export default class Submarine {
   if(constants.angle>=360){
     constants.angle=360%constants.angle
   }
+  
   //constants.angle+=0.1
     // if(constants.angle>=360){
     //   constants.angle=0;
     // }
-    //  constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
-    //    constants.finArea,constants.finAngle,constants.mass,constants.length)
-    //    constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
-    //    console.log(constants.rotationSpeedXZ);
-    //    constants.angle=constants.rotationSpeedXZ*this.experience.time.threeDelta;
+       constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.z,
+         constants.finArea,constants.finAngle,constants.mass,constants.length)
+        constants.rotationSpeedXZ+=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
+         console.log(constants.rotationAccelerationOnXZ);
+        constants.angle+=constants.rotationSpeedXZ*this.experience.time.threeDelta;
     this.model.rotation.x=degToRad(constants.Yangle)
-      this.model.rotation.y=degToRad(constants.angle-90);
-      console.log("terminal velocity"+ this.velocity);
+      
+    this.model.rotation.y=degToRad(constants.angle-90);
+      // console.log("terminal velocity"+ this.velocity);
       this.thrust = this.physics.thrustForceWithAngle(constants.Ro, constants.n, constants.pitch, constants.D,degToRad(constants.angle),degToRad(constants.Yangle));
       this.velocity = Math.abs(this.physics.propellerVelocity(this.thrust.x, constants.power));
     this.drag = this.physics.dragForceWithAngle(constants.Cd, constants.Ro, constants.speedZ.x, constants.A,degToRad(constants.angle),degToRad(constants.Yangle));
@@ -286,6 +298,9 @@ export default class Submarine {
   }
 
   update() {
+    if(this.model.position.y>=0){
+      this.model.position.y==0;
+    }
     this.experience.camera;
     if (constants.Diving === true && constants.Float === false) {
       console.log("Diving");

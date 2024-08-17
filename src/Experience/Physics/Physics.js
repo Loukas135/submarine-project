@@ -45,17 +45,16 @@ export default class Physics {
   }
   rotationAccelerationOnXZ(Cd,Ro,velocity,Afin,finAngle,mass,length){
     let dragOnFin=0.5*Cd*Ro*velocity*velocity*Afin*this.cosine(finAngle);
-    let alpha=0.6*length*mass/(dragOnFin);
-    if(dragOnFin==0){
-      alpha=0;
-    }
+    //let specialPropellerThrust= Ro * constants.n * Math.pow(constants.pitch, 2) * Math.pow(constants.D, 4)*this.cosine(finAngle);
+   // let force=dragOnFin+specialPropellerThrust;
+    let alpha=5*dragOnFin/(mass*length);
     return alpha;
   }
   rotationAccelerationOnY(Cd,Ro,velocity,Afin,finAngle,mass,length){
     let dragOnFin=0.5*Cd*Ro*velocity*velocity*Afin*this.sine(finAngle);
-    let alpha=0.6*length*mass/(dragOnFin);
-    if(dragOnFin==0){
-      alpha=0;
-  }
+    //let specialPropellerThrust=Ro * constants.n * Math.pow(constants.pitch, 2) * Math.pow(constants.D, 4);
+    //let force=dragOnFin+specialPropellerThrust;
+    let alpha= 5*dragOnFin/(mass*length);
+    return alpha;
 }
 }
