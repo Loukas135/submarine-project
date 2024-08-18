@@ -22,7 +22,6 @@ export default class Submarine {
     this.debug = this.experience.debug;
     this.resources = this.experience.resources;
     this.camera = this.experience.camera.instance;
-    this.iceberg = new Iceberg();
 
     this.lastFrameTime = 0;
 
@@ -47,19 +46,6 @@ export default class Submarine {
   setModel() {
     this.model = this.resource.scene;
     this.model.scale.set(0.1, 0.1, 0.1);
-
-    this.cube = new Mesh(
-      new BoxGeometry(0.5, 1, 16),
-      new MeshBasicMaterial({
-        transparent: true,
-        opacity: 1,
-      })
-    );
-    this.cubebb = new Box3(new Vector3(), new Vector3());
-    this.cubebb.setFromObject(this.cube);
-    this.cube.add(this.model);
-    this.model = this.cube;
-
     this.model.add(this.audio);
     this.scene.add(this.model);
 
@@ -331,22 +317,36 @@ export default class Submarine {
   }
 
   update() {
-    if (this.cubebb.intersectsBox(this.iceberg.cubebb1)) {
-      console.log("Intersect");
-      constants.speedZ.x = 0;
-      constants.speedZ.y = 0;
-      constants.speedZ.z = 0;
-    }
     this.experience.camera;
     if (constants.startExperimenting) {
       if (constants.resultY.y !== 0) {
         constants.eTime = constants.eTime + this.experience.time.threeDelta;
       }
-      console.log("TTTTTiiiimmmmmmmwmm" + constants.eTime);
+      // console.log("TTTTTiiiimmmmmmmwmm" + constants.eTime);
 
-      console.log("posssssssssssssssssssss" + this.model.position.y);
-      console.log("res : " + constants.resultY.y);
-      console.log("speed:  " + constants.speed1.y);
+      console.log(
+        "Current Position" + this.model.position.x + " ",
+        this.model.position.y + " ",
+        this.model.position.z
+      );
+      console.log("result of forces on Y : " + constants.resultY.y);
+      console.log(
+        "result of forces on XYZ : " +
+          constants.resultZ.x +
+          " " +
+          constants.resultZ.y +
+          " " +
+          constants.resultZ.z
+      );
+      console.log("velocity on Y : " + constants.speed1.y);
+      console.log(
+        "Velocity with thrust : " +
+          constants.speedZ.x +
+          " " +
+          constants.speedZ.y +
+          " " +
+          constants.speedZ.z
+      );
 
       this.state();
       if (constants.hMax < constants.h) {
@@ -472,7 +472,7 @@ export default class Submarine {
     //   this.model.position.z + 12
     // );
 
-    // this.camera.lookAt(this.model.position);
+    //this.camera.lookAt(this.model.position);
   }
 
   setControls() {

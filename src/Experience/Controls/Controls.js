@@ -38,39 +38,40 @@ export default class Controls {
     // this.modelPosition.z -= 0.01;
     // this.cameraPosition.z -= 0.01;
     // this.orbitControls.target.z -= 0.01;
-    if(constants.Yangle<90)
-    constants.Yangle +=0.1;
-  if(constants.Yangle>=90){
-    constants.Yangle=0.1;
-  }
+    if (constants.Yangle < 90) {
+      constants.Yangle += 0.1;
+    }
+    if (constants.Yangle > 90) {
+      constants.Yangle = 90;
+    }
   }
 
   moveRightwardEvent() {
-    constants.angle-=0.5;
+    constants.angle -= 0.5;
   }
 
   moveLeftwardEvent() {
-    constants.angle+=0.5;
+    constants.angle += 0.5;
   }
 
   moveForwardEvent() {
     // this.cameraPosition.z += 0.01;
-    if(constants.Yangle>-90){
-      constants.Yangle -=0.1;
+    if (constants.Yangle > -90) {
+      constants.Yangle -= 0.1;
     }
-    if(constants.Yangle<=-90){
-      constants.Yangle=-90;
+    if (constants.Yangle <= -90) {
+      constants.Yangle = -90;
     }
   }
 
   dive() {
-    constants.Float=false;
-    constants.Diving=true;
+    constants.Float = false;
+    constants.Diving = true;
   }
 
   arise() {
-    constants.Diving=false;
-    constants.Float=true;
+    constants.Diving = false;
+    constants.Float = true;
   }
 
   addKeyboardEventListeners() {
@@ -105,18 +106,23 @@ export default class Controls {
         this.dive();
       }
       if (pressedKeys["g"] || pressedKeys["G"]) {
-        constants.Go=true;
+        constants.Go = true;
       }
       if (pressedKeys["p"] || pressedKeys["P"]) {
-        constants.Go=false;
-            }
+        constants.Go = false;
+      }
     });
 
     /* Handle relese the button */
     document.addEventListener("keyup", (event) => {
       pressedKeys[event.key] = false;
-      if(event.key=='A' || event.key=='a' || event.key=='D' ||event.key=='d'){
-        constants.finAngle=90;
+      if (
+        event.key == "A" ||
+        event.key == "a" ||
+        event.key == "D" ||
+        event.key == "d"
+      ) {
+        constants.finAngle = 90;
       }
     });
   }

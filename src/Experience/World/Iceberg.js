@@ -36,14 +36,6 @@ export default class Iceberg {
     // this.cube1.add(this.model);
     // this.model = this.cube1;
 
-    this.cube = new THREE.Mesh(
-      new THREE.BoxGeometry(5, 5, 5),
-      new THREE.MeshBasicMaterial({ opacity: 1, transparent: true })
-    );
-    this.cubebb1 = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
-    this.cubebb1.setFromObject(this.cube);
-    this.model.add(this.cube);
-
     this.scene.add(this.model);
 
     this.model.traverse((child) => {
