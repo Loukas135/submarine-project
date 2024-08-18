@@ -33,6 +33,11 @@ const sources = [
     name: "helicopterModel",
     path: modelsPath + "helicopter.glb",
   },
+  {
+    type: GLTF_MODEL,
+    name: "icebergModel",
+    path: modelsPath + "iceberg.glb",
+  },
 
   /* Audios */
   {

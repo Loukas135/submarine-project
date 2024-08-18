@@ -51,16 +51,16 @@ export const constants = {
   power: 1500000000,
   n: 0,
   D: 4,
-  pitch: 2,
+  pitch: 4,
   resultZ: new THREE.Vector3(0, 0, 0),
   speedZ: new THREE.Vector3(0, 0, 0),
   /* */
   /* Drag */
   Cd: 0.82,
-  A: 2,
+  A: 10,
   /* */
   /*angle of rotation for submarine on XZ*/
-  finArea : 11,
+  finArea : 1100,
   angle : 90,
   Yangle : 0,
   finAngle : 0,

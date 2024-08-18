@@ -107,6 +107,13 @@ export default class Submarine {
           constants.Float = false;
         }
       });
+      this.debugFolder.add(constants,"angle")
+      .min(-360)
+      .max(360)
+      .step(1)
+      .onChange((value)=>{
+        constants.angle=value
+      });
       // this.debugFolder
       //   .add(constants, "angle")
       //   .min(-360)
@@ -215,11 +222,11 @@ constants.massadd= constants.massTotlal- constants.balancemass
     // if(constants.angle>=360){
     //   constants.angle=0;
     // }
-      // constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
-      //   constants.finArea,constants.finAngle,constants.mass,constants.length)
-      //  constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
-      //   console.log(constants.rotationSpeedXZ);
-      //   constants.angle+=constants.rotationSpeedXZ*this.experience.time.threeDelta;
+    //  constants.rotationAccelerationOnXZ=this.physics.rotationAccelerationOnXZ(constants.Cd,constants.Ro,constants.speedZ.x,
+    //      constants.finArea,constants.finAngle,constants.mass,constants.length)
+    //     constants.rotationSpeedXZ=constants.rotationAccelerationOnXZ*this.experience.time.threeDelta;
+    //      console.log(constants.rotationSpeedXZ);
+    //     constants.angle+=constants.rotationSpeedXZ*this.experience.time.threeDelta;
     this.model.rotation.x=degToRad(constants.Yangle)
       this.model.rotation.y=degToRad(constants.angle-90);
       // console.log("terminal velocity"+ this.velocity);
@@ -233,6 +240,7 @@ constants.massadd= constants.massTotlal- constants.balancemass
     constants.acceleration.set(constants.resultZ.x/constants.mass, constants.resultZ.y/constants.mass, constants.resultZ.z / constants.mass);
     if(constants.speedZ.x <= this.velocity && constants.speedZ.z <= this.velocity ){
       //console.log('speed before: ' + constants.speedZ.z);
+
       constants.speedZ.x = constants.speedZ.x + constants.acceleration.x * this.experience.time.threeDelta ;
     constants.speedZ.z = constants.speedZ.z + constants.acceleration.z * this.experience.time.threeDelta ;
     constants.speedZ.y = constants.speedZ.y + constants.acceleration.y * this.experience.time.threeDelta;
@@ -454,6 +462,20 @@ console.log('TTTTTiiiimmmmmmmwmm'+constants.eTime)
     if (constants.Go === true) {
       if(constants.n<=10){
         constants.n+=1;
+      }
+    }
+    if (constants.Go === false) {
+      if(constants.n>0){
+        constants.n-=1;
+      }
+      if(constants.speedZ.x>0){
+        constants.speedZ.x-=0.1;
+      }
+      if(constants.speedZ.y>0){
+        constants.speedZ.y-=0.1;
+      }
+      if(constants.speedZ.z>0){
+        constants.speedZ.z-=0.1;
       }
     }
     this.thrustPower();

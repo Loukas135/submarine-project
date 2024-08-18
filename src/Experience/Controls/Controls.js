@@ -46,11 +46,11 @@ export default class Controls {
   }
 
   moveRightwardEvent() {
-    constants.angle -=0.1;
+    constants.angle-=0.5;
   }
 
   moveLeftwardEvent() {
-    constants.angle +=0.1;
+    constants.angle+=0.5;
   }
 
   moveForwardEvent() {
@@ -115,6 +115,9 @@ export default class Controls {
     /* Handle relese the button */
     document.addEventListener("keyup", (event) => {
       pressedKeys[event.key] = false;
+      if(event.key=='A' || event.key=='a' || event.key=='D' ||event.key=='d'){
+        constants.finAngle=90;
+      }
     });
   }
 }
