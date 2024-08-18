@@ -4,8 +4,8 @@ import Ocean from "./Ocean.js";
 import Iceberg from "./Iceberg.js";
 import Seagulls from "./Seagulls.js";
 import Submarine from "./Submarine.js";
-import Environment from "./Environment.js";
 import Helicopter from "./Helicopter.js";
+import Environment from "./Environment.js";
 
 export default class World {
   constructor() {
@@ -16,7 +16,7 @@ export default class World {
     /* Waiting for resources to load */
     this.resources.on("ready", () => {
       this.ocean = new Ocean();
-      this.iceberg = new Iceberg();
+      // this.iceberg = new Iceberg();
       this.seagulls = new Seagulls();
       this.submarine = new Submarine();
       this.helicopter = new Helicopter();

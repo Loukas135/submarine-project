@@ -28,11 +28,12 @@ export default class Camera {
 
   setOrbitControls() {
     this.controls = new OrbitControls(this.instance, this.canvas);
+
     this.controls.minDistance = 10;
-    // this.controls.maxDistance = 60;
+    this.controls.maxDistance = 60;
     this.controls.enablePan = false;
-    this.controls.enableDamping = true;
     this.controls.rotateSpeed = 0.7;
+    this.controls.enableDamping = true;
   }
 
   resize() {

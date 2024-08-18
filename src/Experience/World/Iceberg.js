@@ -1,4 +1,3 @@
-
 import * as THREE from "three";
 
 import Experience from "../Experience.js";
@@ -26,6 +25,24 @@ export default class Iceberg {
     this.model.position.set(-40, 0, -40);
     this.model.scale.set(5, 5, 5);
     //this.scene.add(this.cub1);
+    // this.cube1 = new THREE.Mesh(
+    //   new THREE.BoxGeometry(3, 3, 3),
+    //   new THREE.MeshBasicMaterial({
+    //     transparent: true,
+    //   })
+    // );
+    // this.cube1.position.copy(this.model.position);
+
+    // this.cube1.add(this.model);
+    // this.model = this.cube1;
+
+    this.cube = new THREE.Mesh(
+      new THREE.BoxGeometry(5, 5, 5),
+      new THREE.MeshBasicMaterial({ opacity: 1, transparent: true })
+    );
+    this.cubebb1 = new THREE.Box3(new THREE.Vector3(), new THREE.Vector3());
+    this.cubebb1.setFromObject(this.cube);
+    this.model.add(this.cube);
 
     this.scene.add(this.model);
 
@@ -52,5 +69,4 @@ export default class Iceberg {
         .step(0.01);
     }
   }
-
 }
